@@ -1,12 +1,13 @@
 cellHeight=65;
 cellDiameter=18.95;
-holderHeight=7;
+holderHeight=8;
 spacing=0.7;
 stripTabHeight=1.5;
 stripWidth=8;
-coverThickness=2;
 outerRimThicness=3;
-stripDiff=-1;
+stripDiff=-1;// how small make the strip in plus side
+
+coverThickness=2;
 
 holderDiameter=cellDiameter+spacing;
 stripLength=holderDiameter+0.001; 
@@ -20,12 +21,12 @@ stripZ=holderHeight+(stripTabHeight/2);
 outerRimHeight=holderHeight+stripTabHeight-0.001;
 
 bodyHeight=cellHeight-(holderHeight*2);
-rimOffset=radius+spacing+outerRimThicness;
+rimOffset=radius+spacing+3+outerRimThicness;// from where to drawe holer's rim
 
 
 makeHolders=true;
 makeLeftHolder=makeHolders && true;
-makeRightHolder=makeHolders && true;
+makeRightHolder=makeHolders && false;
 
 makeBody=false;
 
@@ -74,9 +75,12 @@ custom20s10p
     ];
 
 simpleOne=[
-         [p,p,n]
-        ,[p,p,n,n]
-        ,[n,n,p,p]
+         [p,p,n,s]
+        ,[p,p,n,s]
+        ,[n,n,p,s]
+        ,[n,n,p,s]
+        ,[n,n,p,s]
+        ,[n,n,p,s]
         ];
 manArr=simpleOne;
 
@@ -224,9 +228,11 @@ module drawCell(pos,cell=true,left=true){
         }
         
     }  
-    else{        
-        
-        translate([x,y-outerRimThicness,holderZ+holderActuallHeight-holderHeight]){       
+    else{   
+        translate([x,y+spacing+1,holderZ+holderActuallHeight-(holderHeight/1.5)]){       
+           cube([stripLength+spacing,16,stripTabHeight+holderActuallHeight],center=true);
+        }           
+        *translate([x,y-outerRimThicness,holderZ+holderActuallHeight-holderHeight]){       
            cube([stripLength,cellDiameter-spacing,stripTabHeight+holderActuallHeight],center=true);
         }   
     }   
