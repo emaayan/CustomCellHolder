@@ -57,10 +57,10 @@ if(sr>0) sr];
 
 //templateArr=[for(serial=[1:1:14])    5];// recangular
     
-//templateArr=[1,2,2];// for custom shampe
+templateArr=[1,2,2];// for custom shampe
 //templateArr=[9,9,9,8,8,7,7,6,6,5,5,4,4,3,3];// triangle for custom shampe
 //templateArr=[8,8,9,9,10,10,11,11,12,11,12,11,12,11,12,11,12,11,10,9,9,8,5];// for custom shampe
-templateArr=[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,5,4];// for custom shampe
+//templateArr=[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,5,4];// for custom shampe
 
 echo (templateArr);
 
@@ -102,8 +102,35 @@ function makeParalall(reverse,serialIndex,paralalls)
            ];
 
 function makeCell(reverse,serialIndex,paralallIndex)
-    = [reverse*((paralallIndex+(serialIndex%2*fr)))  *(d+parallalSpace)    ,(serialIndex*fc  *(d+serialSpace))];
+    = [   reverse*((paralallIndex+(serialIndex%2*fr)))  *(d+parallalSpace)   
+         ,(serialIndex*fc  *(d+serialSpace))
+         ];
              
+
+module cellDraw(cell){
+    x=cell[0];
+    y=cell[1];    
+    offset=0.001;
+    z=height-(railThickness/2);//cell[2];   
+    //echo (x,y,z);
+    
+    translate([x,y,z+offset]){ //because it's centered, so is the z, so lower by half               
+        angle=60;
+        rotate(90){
+            cube([stripWidth,d+serialSpace,railThickness],center=true);
+        }
+        rotate(90-angle){
+            cube([stripWidth,d+parallalSpace,railThickness],center=true);
+        }
+        rotate(90-(angle*2)){
+            cube([stripWidth,d+parallalSpace,railThickness],center=true);
+        }                          
+    }
+    translate([x,y,-offset]){ 
+            cylinder(d=d,h=(height-railThickness)+offset*3,center=false);       
+    }                      
+   
+}
             
 function getTotalSerials(arr)
        = len(arr);             
@@ -208,31 +235,6 @@ module gen(arr){
 }  
 
 
-module cellDraw(cell){
-    x=cell[0];
-    y=cell[1];    
-       
-    //echo (x,y,z);
-    offset=0.001;
-    translate([x,y,height-(railThickness/2)+offset]){ //because it's centered, so is the z, so lower by half               
-            angle=60;
-            rotate(90){
-                cube([stripWidth,d+serialSpace,railThickness],center=true);
-            }
-            rotate(90-angle){
-                cube([stripWidth,d+parallalSpace,railThickness],center=true);
-            }
-            rotate(90-(angle*2)){
-                cube([stripWidth,d+parallalSpace,railThickness],center=true);
-            }                   
-            
-    }
-    
-    translate([x,y,-offset]){ 
-        cylinder(d=d,h=(height-railThickness)+offset*3,center=false);       
-    }
-           
-}
 
 
 //echo (arr);            
