@@ -1,5 +1,5 @@
 cellHeight=65;
-cellDiameter=19.2;
+cellDiameter=18.95;
 holderHeight=7;
 spacing=0.7;
 stripTabHeight=1.5;
@@ -25,16 +25,13 @@ rimOffset=radius+spacing+outerRimThicness;
 
 makeHolders=true;
 makeLeftHolder=makeHolders && true;
-makeRightHolder=makeHolders && false;
+makeRightHolder=makeHolders && true;
 
-makeBody=true;
+makeBody=false;
 
-makeCovers=true;
+makeCovers=false;
 makeLeftCover=makeCovers && true;
 makeRightCover=makeCovers && false;
-
-
-
 
 s=0;
 n=-1;
@@ -75,8 +72,13 @@ custom20s10p
     ,[s,n,p,n,p]
     ,[s,n,p,p,p]
     ];
-    
-manArr=trangle14s6p;
+
+simpleOne=[
+         [p,p,n]
+        ,[p,p,n,n]
+        ,[n,n,p,p]
+        ];
+manArr=simpleOne;
 
 function countPolarity(manArr,d)
     =[for(x=[0:len(manArr)-1])
@@ -125,7 +127,7 @@ if (makeRightCover){
 if (makeRightHolder){
     difference(){
         drawRim(conv);
-        drawHoles(manArr);
+        drawHoles(manArr,false);
     }
 }
 
@@ -148,7 +150,7 @@ if (makeLeftHolder){
         mirror([0,0,90]){
           difference(){
             drawRim(conv);
-            drawHoles(manArr);
+            drawHoles(manArr,true);
           }
         }
     }
@@ -167,16 +169,12 @@ module drawRim(conv,rimHeight=outerRimHeight){
         }
     }
 }
-module drawHoles(manArr){
+module drawHoles(manArr,left=true){
     for(c=[0:len(manArr)-1]){
          col= manArr[c];
          for(r=[0:len(col)-1]){
              cell=col[r];
-             //if (cell){              
-                 drawCell([c,r],cell);  
-             //}else{
-               
-             //}
+             drawCell([c,r],cell,left);               
          }     
     }  
 }
@@ -187,7 +185,7 @@ function calc2D(col,row)
 function calcAbsolutePostion(col,row)
     =concat(calc2D(col,row),0);
 
-module drawCell(pos,cell=true){
+module drawCell(pos,cell=true,left=true){
        
     col=pos[0];
     row=pos[1];              
@@ -196,12 +194,16 @@ module drawCell(pos,cell=true){
     x=position[0];
     y=position[1];
     z=position[2];
+    positiveCell=cell==p;
+    negativeCell=cell==n;
+    drawNegative=stripDiff!=0 && (negativeCell && left || positiveCell && !left  );
+    
     holderZ=z-0.001;      
-    if(cell==n || cell==p){
+    if(negativeCell || positiveCell){
         translate([x,y,z]){
             
             translate([0,0,stripZ]){               
-               actuallstripWidth= stripWidth+ (cell==n ?0:stripDiff);
+               actuallstripWidth= stripWidth+ (drawNegative ?0:stripDiff);
                cube([stripLength,actuallstripWidth,stripTabHeight],center=true);
                 
                rotate(angle){
@@ -215,7 +217,7 @@ module drawCell(pos,cell=true){
         }
         
         translate([x,y,holderZ]){       
-            clr= cell==n ? "black" :"red";
+            clr=drawNegative ? "black" :"red";
             color(clr){
                 cylinder(d=cellDiameter,h=holderActuallHeight);
             }
