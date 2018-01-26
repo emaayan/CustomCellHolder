@@ -6,7 +6,7 @@ stripTabHeight=1.5;
 stripWidth=8;
 coverThickness=2;
 outerRimThicness=3;
-stripDiff=-2;
+stripDiff=-1;
 
 holderDiameter=cellDiameter+spacing;
 stripLength=holderDiameter+0.001; 
@@ -27,11 +27,11 @@ makeHolders=true;
 makeLeftHolder=makeHolders && true;
 makeRightHolder=makeHolders && false;
 
-makeBody=false;
+makeBody=true;
 
-makeCovers=false;
+makeCovers=true;
 makeLeftCover=makeCovers && true;
-makeRightCover=makeCovers && true;
+makeRightCover=makeCovers && false;
 
 
 
@@ -40,7 +40,8 @@ s=0;
 n=-1;
 p=1;
 
-manArr=[
+trangle14s6p
+    =[ 
      [s,p,p,p,p,p,p,p,p,p,p,p,n,n]
     ,[s,p,p,p,p,p,p,p,p,p,p,p,n,n,n]
     ,[s,p,n,p,p,n,p,p,n,p,n,p,n,n,n]
@@ -49,7 +50,33 @@ manArr=[
     ,[s,p,n,n,n,n,p,p,n,n,n]
     ,[s,n,n,n,n,n,n,n,n]
     ];
-
+    
+custom20s10p
+=[ 
+     [s,p,n,p,p,p,n,p,p]
+    ,[s,p,n,p,p,p,n,p,p,n]
+    ,[s,p,n,p,n,p,n,p,p,n]
+    ,[s,p,n,p,n,p,n,p,p,n,n]
+    ,[s,p,n,p,n,p,n,p,p,p,p,n,n]
+    ,[s,p,n,p,n,p,n,p,p,p,p,n,n]
+    ,[s,p,n,p,n,p,n,p,p,p,p,n,n]
+    ,[s,p,n,p,n,p,n,p,p,p,p,n,n]
+    ,[s,p,n,p,n,n,n,p,p,p,p,n,n]
+    ,[s,p,n,p,n,n,n,p,p,p,p,n,n]
+    ,[s,n,p,n,n,n,p,n,p,n,p,n]
+    ,[s,n,p,n,n,n,p,n,p,n,p,n]
+    ,[s,n,p,n,p,n,p,n,p,n,p,n]
+    ,[s,n,p,n,p,n,p,n,p,n,n]
+    ,[s,n,p,n,p,n,p,n,n,n,n]
+    ,[s,n,p,n,p,n,p,n,n,n,n]    
+    ,[s,n,p,n,p,n,p,n,n]
+    ,[s,n,p,n,p,n,p,n]
+    ,[s,n,p,n,p,p,p]
+    ,[s,n,p,n,p]
+    ,[s,n,p,p,p]
+    ];
+    
+manArr=trangle14s6p;
 
 function countPolarity(manArr,d)
     =[for(x=[0:len(manArr)-1])
@@ -60,10 +87,10 @@ function countPolarity(manArr,d)
 negatives=len(countPolarity(manArr,n));
 positives=len(countPolarity(manArr,p));
 total=negatives+positives;
-group=6;
+group=10;
             
 echo("**********");
-echo("Negatives",negatives," Positives",positives,"Total :",total,"Serial: ",total/group );
+echo("Negatives",negatives," Positives",positives,"Total :",total,"Serial: ",total/group ,"Group: " ,group);
 echo("**********");
 echo("");
 
