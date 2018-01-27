@@ -1,12 +1,12 @@
 cellHeight=65;
-cellDiameter=18.95;
+cellDiameter=18.90;
 holderHeight=8;
 spacing=0.7;
 stripTabHeight=1.5;
 stripWidth=8;
-outerRimThicness=3;
+outerRimThicness=2.5;
 stripDiff=-1;// how small make the strip in plus side
-
+bmsThickness=15.5;
 coverThickness=2;
 
 holderDiameter=cellDiameter+spacing;
@@ -82,8 +82,18 @@ simpleOne=[
         ,[n,n,p,s]
         ,[n,n,p,s]
         ];
-manArr=simpleOne;
+        
+mine14s6p=[
+         [s,n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+        ,[s,n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+        ,[s,n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+        ,[s,n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+        ,[s,n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+        ,[s,n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+            ];        
+manArr=mine14s6p;
 
+debug=false;
 function countPolarity(manArr,d)
     =[for(x=[0:len(manArr)-1])
         for(y=[0:len(manArr[x])-1])
@@ -93,7 +103,7 @@ function countPolarity(manArr,d)
 negatives=len(countPolarity(manArr,n));
 positives=len(countPolarity(manArr,p));
 total=negatives+positives;
-group=10;
+group=6;
             
 echo("**********");
 echo("Negatives",negatives," Positives",positives,"Total :",total,"Serial: ",total/group ,"Group: " ,group);
@@ -167,9 +177,11 @@ if (makeLeftCover){
 }
 
 module drawRim(conv,rimHeight=outerRimHeight){
-    linear_extrude(rimHeight){
-        offset(r=rimOffset){
-            polygon(conv);
+    if (!debug){
+        linear_extrude(rimHeight){
+            offset(r=rimOffset){
+                polygon(conv);
+            }
         }
     }
 }
@@ -202,7 +214,8 @@ module drawCell(pos,cell=true,left=true){
     negativeCell=cell==n;
     drawNegative=stripDiff!=0 && (negativeCell && left || positiveCell && !left  );
     
-    holderZ=z-0.001;      
+    holderZ=z-0.001; 
+    actuallstripWidth= stripWidth+ (drawNegative ?0:stripDiff);
     if(negativeCell || positiveCell){
         translate([x,y,z]){
             
@@ -225,16 +238,13 @@ module drawCell(pos,cell=true,left=true){
             color(clr){
                 cylinder(d=cellDiameter,h=holderActuallHeight);
             }
-        }
-        
-    }  
-    else{   
-        translate([x,y+spacing+1,holderZ+holderActuallHeight-(holderHeight/1.5)]){       
-           cube([stripLength+spacing,16,stripTabHeight+holderActuallHeight],center=true);
+        }       
+    }else{  
+        bmsHeightLocation=holderActuallHeight + stripTabHeight;
+        translate([x,y-(bmsThickness/2)+(outerRimThicness*2),((bmsHeightLocation)/2)]){               
+            cube([stripLength+spacing,bmsThickness,bmsHeightLocation+0.001],center=true);                      
         }           
-        *translate([x,y-outerRimThicness,holderZ+holderActuallHeight-holderHeight]){       
-           cube([stripLength,cellDiameter-spacing,stripTabHeight+holderActuallHeight],center=true);
-        }   
+         
     }   
     
    
