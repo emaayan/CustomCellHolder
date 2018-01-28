@@ -25,14 +25,14 @@ rimOffset=radius+spacing+3+outerRimThicness;// from where to drawe holer's rim
 
 
 makeHolders=true;
-makeLeftHolder=makeHolders && true;
-makeRightHolder=makeHolders && false;
+makeLeftHolder=makeHolders && false;
+makeRightHolder=makeHolders && true;
 
 makeBody=false;
 
 makeCovers=false;
 makeLeftCover=makeCovers && true;
-makeRightCover=makeCovers && false;
+makeRightCover=makeCovers && true;
 
 s=0;
 n=-1;
@@ -75,12 +75,12 @@ custom20s10p
     ];
 
 simpleOne=[
-         [p,p,n,s]
-        ,[p,p,n,s]
-        ,[n,n,p,s]
-        ,[n,n,p,s]
-        ,[n,n,p,s]
-        ,[n,n,p,s]
+         [n,p,p,n]
+        ,[n,p,p,n]
+        ,[n,n,n,p]
+        ,[n,n,n,p]
+        ,[n,n,n,p]
+        ,[n,n,n,p]
         ];
         
 mine14s6p=[
@@ -90,10 +90,14 @@ mine14s6p=[
         ,[s,n,p,n,p,n,p,n,p,n,p,n,p,n,p]
         ,[s,n,p,n,p,n,p,n,p,n,p,n,p,n,p]
         ,[s,n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+        
             ];        
-manArr=mine14s6p;
+            
+manArr=simpleOne;
 
 debug=false;
+
+
 function countPolarity(manArr,d)
     =[for(x=[0:len(manArr)-1])
         for(y=[0:len(manArr[x])-1])
@@ -128,8 +132,9 @@ end=[for(x=[0:len(manArr[len(manArr)-1])-1])
 all=concat(start,right,left,end);
 
 
+    
 conv=[for(x=[0:len(all)-1])
-     calc2D(all[x][0],all[x][1])
+     calc2D(all[x][0],all[x][1])      
 ];
 
 if (makeRightCover){
@@ -138,12 +143,26 @@ if (makeRightCover){
     }
 }
 
-if (makeRightHolder){
-    difference(){
-        drawRim(conv);
-        drawHoles(manArr,false);
+if (makeLeftCover){
+    translate([0,0,-bodyHeight-2-holderActuallHeight-8]){
+        drawRim(conv,coverThickness);
     }
 }
+
+
+if (makeRightHolder){
+     drawHolder(false);
+}
+
+
+if (makeLeftHolder){
+    translate([0,0,-bodyHeight-2]){
+        mirror([0,0,90]){
+          drawHolder(true);
+        }
+    }
+}
+
 
 if (makeBody){
     translate([0,0,-bodyHeight-1]){
@@ -159,24 +178,24 @@ if (makeBody){
         }       
     }
 }
-if (makeLeftHolder){
-    translate([0,0,-bodyHeight-2]){
-        mirror([0,0,90]){
-          difference(){
-            drawRim(conv);
-            drawHoles(manArr,true);
-          }
-        }
+
+
+module drawHolder(left=true){
+     difference(){
+        drawRim(conv,outerRimHeight);  
+        coord=calc2D(0,0);
+        for(a=[0:len(start)-1]){
+            coord=calc2D(start[a][0],start[a][1]);                
+            rimHolesDiameter=2;
+            translate([coord[0]-radius-(rimHolesDiameter/2)+0.25,coord[1],-0.001]){
+                cylinder(d=rimHolesDiameter,h=holderActuallHeight+ stripTabHeight);
+            }
+        }           
+        drawHoles(manArr,left);
     }
 }
 
-if (makeLeftCover){
-    translate([0,0,-bodyHeight-2-holderActuallHeight-8]){
-        drawRim(conv,coverThickness);
-    }
-}
-
-module drawRim(conv,rimHeight=outerRimHeight){
+module drawRim(conv,rimHeight){
     if (!debug){
         linear_extrude(rimHeight){
             offset(r=rimOffset){
@@ -240,10 +259,12 @@ module drawCell(pos,cell=true,left=true){
             }
         }       
     }else{  
+        /*
         bmsHeightLocation=holderActuallHeight + stripTabHeight;
         translate([x,y-(bmsThickness/2)+(outerRimThicness*2),((bmsHeightLocation)/2)]){               
             cube([stripLength+spacing,bmsThickness,bmsHeightLocation+0.001],center=true);                      
         }           
+        */
          
     }   
     
