@@ -25,10 +25,10 @@ rimOffset=radius+spacing+3+outerRimThicness;// from where to drawe holer's rim
 
 
 makeHolders=true;
-makeLeftHolder=makeHolders && false;
+makeLeftHolder=makeHolders && true;
 makeRightHolder=makeHolders && true;
 
-makeBody=false;
+makeBody=true;
 
 makeCovers=false;
 makeLeftCover=makeCovers && true;
@@ -40,38 +40,38 @@ p=1;
 
 trangle14s6p
     =[ 
-     [s,p,p,p,p,p,p,p,p,p,p,p,n,n]
-    ,[s,p,p,p,p,p,p,p,p,p,p,p,n,n,n]
-    ,[s,p,n,p,p,n,p,p,n,p,n,p,n,n,n]
-    ,[s,p,n,p,p,n,p,p,n,p,n,p,n,n]
-    ,[s,p,n,n,n,n,p,p,n,n,n,n,n]
-    ,[s,p,n,n,n,n,p,p,n,n,n]
-    ,[s,n,n,n,n,n,n,n,n]
+     [p,p,p,p,p,p,p,p,p,p,p,n]
+    ,[p,p,p,p,p,p,p,p,p,p,p,n,n,n]
+    ,[p,n,p,p,n,p,p,n,p,n,p,n,n]
+    ,[p,n,p,p,n,p,p,n,p,n,p,n,n]
+    ,[p,n,n,n,n,p,p,n,n,n,n,n]
+    ,[p,n,n,n,n,p,p,n,n,n,n]
+    ,[n,n,n,n,n,n,n,n,n]
     ];
     
 custom20s10p
 =[ 
-     [s,p,n,p,p,p,n,p,p]
-    ,[s,p,n,p,p,p,n,p,p,n]
-    ,[s,p,n,p,n,p,n,p,p,n]
-    ,[s,p,n,p,n,p,n,p,p,n,n]
-    ,[s,p,n,p,n,p,n,p,p,p,p,n,n]
-    ,[s,p,n,p,n,p,n,p,p,p,p,n,n]
-    ,[s,p,n,p,n,p,n,p,p,p,p,n,n]
-    ,[s,p,n,p,n,p,n,p,p,p,p,n,n]
-    ,[s,p,n,p,n,n,n,p,p,p,p,n,n]
-    ,[s,p,n,p,n,n,n,p,p,p,p,n,n]
-    ,[s,n,p,n,n,n,p,n,p,n,p,n]
-    ,[s,n,p,n,n,n,p,n,p,n,p,n]
-    ,[s,n,p,n,p,n,p,n,p,n,p,n]
-    ,[s,n,p,n,p,n,p,n,p,n,n]
-    ,[s,n,p,n,p,n,p,n,n,n,n]
-    ,[s,n,p,n,p,n,p,n,n,n,n]    
-    ,[s,n,p,n,p,n,p,n,n]
-    ,[s,n,p,n,p,n,p,n]
-    ,[s,n,p,n,p,p,p]
-    ,[s,n,p,n,p]
-    ,[s,n,p,p,p]
+     [p,n,p,p,p,n,p,p]
+    ,[p,n,p,p,p,n,p,p,n]
+    ,[p,n,p,n,p,n,p,p,n]
+    ,[p,n,p,n,p,n,p,p,n,n]
+    ,[p,n,p,n,p,n,p,p,p,p,n,n]
+    ,[p,n,p,n,p,n,p,p,p,p,n,n]
+    ,[p,n,p,n,p,n,p,p,p,p,n,n]
+    ,[p,n,p,n,p,n,p,p,p,p,n,n]
+    ,[p,n,p,n,n,n,p,p,p,p,n,n]
+    ,[p,n,p,n,n,n,p,p,p,p,n,n]
+    ,[n,p,n,n,n,p,n,p,n,p,n]
+    ,[n,p,n,n,n,p,n,p,n,p,n]
+    ,[n,p,n,p,n,p,n,p,n,p,n]
+    ,[n,p,n,p,n,p,n,p,n,n]
+    ,[n,p,n,p,n,p,n,n,n,n]
+    ,[n,p,n,p,n,p,n,n,n,n]    
+    ,[n,p,n,p,n,p,n,n]
+    ,[n,p,n,p,n,p,n]
+    ,[n,p,n,p,p,p]
+    ,[n,p,n,p]
+    ,[n,p,p,p]
     ];
 
 simpleOne=[
@@ -84,13 +84,12 @@ simpleOne=[
         ];
         
 mine14s6p=[
-         [s,n,p,n,p,n,p,n,p,n,p,n,p,n,p]
-        ,[s,n,p,n,p,n,p,n,p,n,p,n,p,n,p]
-        ,[s,n,p,n,p,n,p,n,p,n,p,n,p,n,p]
-        ,[s,n,p,n,p,n,p,n,p,n,p,n,p,n,p]
-        ,[s,n,p,n,p,n,p,n,p,n,p,n,p,n,p]
-        ,[s,n,p,n,p,n,p,n,p,n,p,n,p,n,p]
-        
+         [n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+        ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+        ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+        ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+        ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+        ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]       
             ];        
             
 manArr=simpleOne;
@@ -165,25 +164,44 @@ if (makeLeftHolder){
 
 
 if (makeBody){
-    translate([0,0,-bodyHeight-1]){
+    translate([0,0,-bodyHeight-holderHeight]){
         difference(){
-            drawRim(conv,bodyHeight);        
+            actuallBodyHeight=bodyHeight+(holderHeight*2);
+            drawRim(conv,actuallBodyHeight,rimOffset+outerRimThicness);
+            
             translate([0,0,-0.001]){            
-               linear_extrude(bodyHeight+0.002,center=false){
-                    offset(r=rimOffset-outerRimThicness,chamfer=true){
+               linear_extrude(actuallBodyHeight+0.002,center=false){                   
+                    offset(r=rimOffset){
                         polygon(conv);
                     }
                 }
             }               
+            drawBMS(actuallBodyHeight);        
         }       
     }
 }
 
+module drawBMS(h=outerRimHeight){
+        startPos=left[0];
+        coord=calc2D(startPos[0],startPos[1]);        
+        endPos=left[len(left)-1];
+        coordStop=calc2D(endPos[0],endPos[1]);                
+        bmsWidth=20;
+        bmsLength=coordStop[0]-coord[0];        
+        bmsX=coord[0];
+        bmsY=coord[1]-radius-bmsWidth-spacing;
+        
+        translate([bmsX,bmsY,-0.001]){
+            cube([bmsLength,bmsWidth,h+0.002]);
+        }
+}
 
-module drawHolder(left=true){
+module drawHolder(leftSide=true){
      difference(){
         drawRim(conv,outerRimHeight);  
-        coord=calc2D(0,0);
+         
+        drawBMS();
+        
         for(a=[0:len(start)-1]){
             coord=calc2D(start[a][0],start[a][1]);                
             rimHolesDiameter=2;
@@ -191,14 +209,14 @@ module drawHolder(left=true){
                 cylinder(d=rimHolesDiameter,h=holderActuallHeight+ stripTabHeight);
             }
         }           
-        drawHoles(manArr,left);
+        drawHoles(manArr,leftSide);
     }
 }
 
-module drawRim(conv,rimHeight){
+module drawRim(conv,rimHeight,offset=rimOffset){
     if (!debug){
         linear_extrude(rimHeight){
-            offset(r=rimOffset){
+            offset(r=offset){
                 polygon(conv);
             }
         }
