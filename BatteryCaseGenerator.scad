@@ -4,7 +4,7 @@ holderHeight=8;
 spacing=0.7;
 stripTabHeight=1.5;
 stripWidth=8;
-outerRimThicness=2.5;
+outerRimThicness=3;
 stripDiff=-1;// how small make the strip in plus side
 bmsThickness=15.5;
 coverThickness=2;
@@ -26,9 +26,9 @@ rimOffset=radius+spacing+3+outerRimThicness;// from where to drawe holer's rim
 
 makeHolders=true;
 makeLeftHolder=makeHolders && true;
-makeRightHolder=makeHolders && true;
+makeRightHolder=makeHolders && false;
 
-makeBody=true;
+makeBody=false;
 
 makeCovers=false;
 makeLeftCover=makeCovers && true;
@@ -74,13 +74,12 @@ custom20s10p
     ,[n,p,p,p]
     ];
 
-simpleOne=[
-         [n,p,p,n]
-        ,[n,p,p,n]
-        ,[n,n,n,p]
-        ,[n,n,n,p]
-        ,[n,n,n,p]
-        ,[n,n,n,p]
+simpleOne=[         
+        [n,p,p]
+        ,[n,n,]
+        ,[n,n,]
+        ,[n,n,]
+        ,[n,n,p]
         ];
         
 mine14s6p=[
@@ -203,12 +202,34 @@ module drawHolder(leftSide=true){
         drawBMS();
         
         for(a=[0:len(start)-1]){
-            coord=calc2D(start[a][0],start[a][1]);                
+            col=start[a][0];
+            row=start[a][1];
+            coord=calc2D(col,row);                
             rimHolesDiameter=2;
-            translate([coord[0]-radius-(rimHolesDiameter/2)+0.25,coord[1],-0.001]){
-                cylinder(d=rimHolesDiameter,h=holderActuallHeight+ stripTabHeight);
+            translate([coord[0]-radius-(rimHolesDiameter/2),coord[1],-0.001]){                
+                cylinder(d=rimHolesDiameter,h=holderActuallHeight+ stripTabHeight);                             
+                //TODO: make smaller cube only strip size to fully lead wires
+            }                    
+        
+            }           
+        //TODO:makes holes account for covers, enlarge covers to body size 
+        //TODO: makes this across all fours corners,take direction and signs into considaration
+        
+        boltDiameter=4;
+        for(a=[0:len(start)-1]){
+            col=start[a][0];
+            row=start[a][1];
+            coord=calc2D(col,row);
+            isInner= (row %2)==1;
+            if (isInner){
+                spacingFromCellHole=1;
+                boltX=coord[0]-radius-boltDiameter-spacingFromCellHole ;
+                boltY=coord[1];
+                translate([boltX,boltY,-0.001]){
+                  cylinder(d=boltDiameter,h=holderActuallHeight+ stripTabHeight+coverThickness);
+                }
             }
-        }           
+        }
         drawHoles(manArr,leftSide);
     }
 }
