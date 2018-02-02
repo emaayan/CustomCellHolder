@@ -2,13 +2,32 @@ cellHeight=65;
 cellDiameter=18.90;
 holderHeight=8;
 spacing=0.7;
-stripTabHeight=1.5;
+stripTabHeight=1.2;
 stripWidth=8;
-outerRimThicness=3;
+
 stripDiff=-1;// how small make the strip in plus side
-bmsThickness=15.5;
+
 coverThickness=2;
-boltDiameter=4;
+
+outlineOffset=6;//body thickness
+startOffset=1;
+rightOffset=1;
+endOffset=3;
+leftOffset=14;
+
+boltDiameter=5.5;
+boltSpacingFromCell=1.5;
+bodyThickness=3;
+
+bmxXoffset=5;
+bmsWidth=15.5;
+bmsLength=109;
+bmsHeight=66;
+bmsSpacingFromCells=1;
+
+////////
+
+
 holderDiameter=cellDiameter+spacing;
 stripLength=holderDiameter+0.001; 
 angle=60;    
@@ -17,11 +36,10 @@ radius=holderDiameter/2;
 holderActuallHeight=holderHeight+0.002;
 stripZ=holderHeight+(stripTabHeight/2);                            
 
-
 outerRimHeight=holderHeight+stripTabHeight-0.001;
 
-bodyHeight=cellHeight-(holderHeight*2);
-rimOffset=radius+spacing+3+outerRimThicness;// from where to drawe holer's rim
+bodyHeight=cellHeight;
+rimOffset=radius+spacing;// from where to drawe holer's rim
 
 
 makeHolders=true;
@@ -30,7 +48,7 @@ makeRightHolder=makeHolders && true;
 
 makeBody=true;
 
-makeCovers=true;
+makeCovers=flase;
 makeLeftCover=makeCovers && true;
 makeRightCover=makeCovers && true;
 
@@ -74,12 +92,6 @@ custom20s10p
     ,[n,p,p,p]
     ];
 
-simpleOne=[                  
-        [n,n,n,n]
-        ,[n,n,n]
-        ,[n,n,n]
-        ,[n,n,p,n]
-        ];
         
 mine14s6p=[
          [n,p,n,p,n,p,n,p,n,p,n,p,n,p]
@@ -89,6 +101,15 @@ mine14s6p=[
         ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]
         ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]       
             ];        
+
+simpleOne=[                  
+         [n,n,n]
+        ,[n,n,n]
+        ,[n,n,n]
+        ,[n,n]
+        ,[n,n]
+        ,[n]        
+        ];
             
 manArr=simpleOne;
 
@@ -104,7 +125,7 @@ function countPolarity(manArr,d)
 negatives=len(countPolarity(manArr,n));
 positives=len(countPolarity(manArr,p));
 total=negatives+positives;
-group=6;
+group=6; 
             
 echo("**********");
 echo("Negatives",negatives," Positives",positives,"Total :",total,"Serial: ",total/group ,"Group: " ,group);
@@ -115,159 +136,169 @@ echo("");
 start=[for(x=[0:len(manArr[0])-1])
     [0,x]
 ];
+echo("start",start);
 
-
-left =[for(x=[0:len(manArr)-1])
-   [x,0]
-];
 right=[for(x=[0:len(manArr)-1])
-    [x,len(manArr[x])-1]
+    if(len(manArr[x])-1 >0) [x,len(manArr[x])-1]
 ];
-end=[for(x=[0:len(manArr[len(manArr)-1])-1])
+echo ("right",right);
+
+end=[for(x=[len(manArr[len(manArr)-1])-1:-1:0])
     [len(manArr)-1,x]  
 ];
+echo ("end",end);
 
-all=concat(start,right,left,end);
-
-
-    
-conv=[for(x=[0:len(all)-1])
-     calc2D(all[x][0],all[x][1])      
+left =[for(x=[len(manArr)-1:-1:0])
+   [x,0]
 ];
+echo ("left",left);
 
-if (makeRightCover){
-    translate([0,0,holderActuallHeight+8]){
-        makeCover();
-    }
-}
 
-if (makeLeftCover){
-    translate([0,0,-bodyHeight-2-holderActuallHeight-8]){
-        makeCover();
-    }
-}
 
-module makeCover(){
-       difference(){            
-            drawRim(conv,coverThickness,rimOffset+outerRimThicness);            
-            drawStartHoles(boltDiameter);
-            drawEndHoles(boltDiameter);
+function createOutline()
+    =concat( [for(i=start) calc2D(i,-outlineOffset- startOffset,0)]
+            ,[for(i=right) calc2D(i,0,outlineOffset+ rightOffset)]
+            ,[for(i=end)  calc2D(i,outlineOffset+ endOffset,0)]
+            ,[for(i=left) calc2D(i,0,-outlineOffset-leftOffset)]);
+
+
+difference(){
+    union(){
+        if (makeRightCover){
+            translate([0,0,-(coverThickness)]){
+                makeCover();
+            }
         }
-}
-    
-if (makeRightHolder){
-     drawHolder(false);
-}
-
-
-if (makeLeftHolder){
-    translate([0,0,-bodyHeight-2]){
-        mirror([0,0,90]){
-          drawHolder(true);
-        }
-    }
-}
-
-
-if (makeBody){
-    translate([0,0,-bodyHeight-holderHeight]){
-        difference(){
-            actuallBodyHeight=bodyHeight+(holderHeight*2);
-            drawRim(conv,actuallBodyHeight,rimOffset+outerRimThicness);
-            
-            translate([0,0,-0.001]){            
-               linear_extrude(actuallBodyHeight+0.002,center=false){                   
-                    offset(r=rimOffset){
-                        polygon(conv);
-                    }
-                }
-            }               
-            drawBMS(actuallBodyHeight);        
-        }       
-    }
-}
-
-module drawBMS(h=outerRimHeight){
-        startPos=left[0];
-        coord=calc2D(startPos[0],startPos[1]);        
-        endPos=left[len(left)-1];
-        coordStop=calc2D(endPos[0],endPos[1]);                
-        bmsWidth=20;
-        bmsLength=coordStop[0]-coord[0];        
-        bmsX=coord[0];
-        bmsY=coord[1]-radius-bmsWidth-spacing;
         
-        translate([bmsX,bmsY,-0.001]){
-            cube([bmsLength,bmsWidth,h+0.002]);
+        if (makeRightHolder){
+          translate([0,0,-coverThickness-outerRimHeight-0.1]){
+             drawHolder(false);
+          }
         }
+        
+        if (makeBody){
+         
+            translate([0,0,-coverThickness-bodyHeight-0.3+  0]){
+                difference(){                    
+                                                     
+                    drawRim(bodyHeight,rimOffset+bodyThickness);                    
+                    translate([0,0,-0.001]){            
+                        drawRim(bodyHeight+0.01);                    
+                    }                    
+                    
+                }       
+            }
+        
+        }
+        
+        if (makeLeftHolder){
+            translate([0,0,-coverThickness-bodyHeight+outerRimHeight-0.5]){
+                mirror([0,0,90]){
+                  drawHolder(true);
+                }
+            }
+        }
+        
+        if (makeLeftCover){
+            translate([0,0,-coverThickness-coverThickness-bodyHeight-0.7]){
+                makeCover();
+            }
+        }
+                                          
+    }
+    
+    if (bmsLength>0){
+            startPos=start[0];         
+            coord=calc2D(startPos);                        
+            bmsX=coord[0]-radius+spacing+bmxXoffset;
+            bmsY=coord[1]-radius-bmsWidth-spacing;    
+            
+            translate([bmsX,bmsY-bmsSpacingFromCells,-coverThickness-bmsHeight]){            
+               cube([bmsLength,bmsWidth,bmsHeight+0.003]);
+            }
+    }   
+  
 }
+ 
+      
 
 module drawHolder(leftSide=true){
      difference(){
-        drawRim(conv,outerRimHeight);  
+   
+        drawRim(outerRimHeight);  
+                       
+        for(a=[0:len(start)-1]){//draw sense wires holes
          
-       // drawBMS();
-        
-        for(a=[0:len(start)-1]){
-            col=start[a][0];
             row=start[a][1];
-            coord=calc2D(col,row);                
-            rimHolesDiameter=2;
-            translate([coord[0]-radius-(rimHolesDiameter/2),coord[1],-0.001]){                
-                cylinder(d=rimHolesDiameter,h=holderActuallHeight+ stripTabHeight);                             
-                //TODO: make smaller cube only strip size to fully lead wires
-            }                    
-        
+            isOuter= (row %2)==0;
+                if (isOuter){
+                coord=calc2D(start[a]);                
+                rimHolesDiameter=4;
+                translate([coord[0]-radius-(rimHolesDiameter/1.6),coord[1],-0.001]){                
+                    cylinder(d=rimHolesDiameter,h=holderActuallHeight+ stripTabHeight);                                               
+                    translate([0,0,stripZ]){
+                        cube([rimHolesDiameter+1.6,rimHolesDiameter,stripTabHeight+0.001],center=true);                             
+                    }
+                }                    
+                
+                }
             }           
-        //TODO:makes holes account for covers, enlarge covers to body size 
-        //TODO: makes this across all fours corners,take direction and signs into considaration
-            
-        drawStartHoles(boltDiameter);
-        drawEndHoles(boltDiameter);
+                
+        drawAllBoltHoles();
         drawHoles(manArr,leftSide);
+      
     }
 }
-module drawStartHoles(boltDiameter){
+module drawAllBoltHoles(){
+        drawBoltHoles(start,1,-1,boltDiameter);
+        arrEdge=right;
+        isInnerPrm=1;
+        spaceFactor=-1;   
+        for(a=[0:len(arrEdge)-1]){// draw right bolt diameter         
+            row=arrEdge[a][1];        
+            coord=calc2D(arrEdge[a]);
+            isInner= (row %2)==isInnerPrm;
+            if (isInner){                                
+                boltX=coord[0]+spaceFactor*(radius+(boltDiameter/2)+(boltSpacingFromCell/2));
+                boltY=coord[1]-spaceFactor*(radius+(boltDiameter/2)+boltSpacingFromCell);
+                translate([boltX,boltY,-0.001]){
+                  cylinder(d=boltDiameter,h=holderActuallHeight+ stripTabHeight+coverThickness);
+                }
+            }
+          }
+        drawBoltHoles(end,0,1,boltDiameter);
+}
 
-        for(a=[0:len(start)-1]){
-            col=start[a][0];
-            row=start[a][1];
-            coord=calc2D(col,row);
-            isInner= (row %2)==1;
-            if (isInner){
-                spacingFromCellHole=1;
-                boltX=coord[0]-(radius+boltDiameter+spacingFromCellHole) ;
-                boltY=coord[1];
-                translate([boltX,boltY,-0.001]){
-                  cylinder(d=boltDiameter,h=holderActuallHeight+ stripTabHeight+coverThickness);
-                }
+module makeCover(){
+   difference(){   
+        drawRim(coverThickness,rimOffset+bodyThickness);                                   
+        drawAllBoltHoles();         
+    }
+}
+module drawBoltHoles(arrEdge,isInnerPrm,spaceFactor){
+     for(a=[0:len(arrEdge)-1]){   
+        row=arrEdge[a][1];        
+        coord=calc2D(arrEdge[a]);
+        isInner= (row %2)==isInnerPrm;
+        if (isInner){                            
+            
+            boltX=coord[0]+spaceFactor*(radius+(boltDiameter/2)+boltSpacingFromCell);
+            boltY=coord[1];
+            translate([boltX,boltY,-0.001]){
+              cylinder(d=boltDiameter,h=holderActuallHeight+ stripTabHeight+coverThickness);
             }
         }
+      }
 }
-module drawEndHoles(boltDiameter){
-      for(a=[0:len(end)-1]){
-            col=end[a][0];
-            row=end[a][1];
-            coord=calc2D(col,row);
-            isInner= (row %2)==0;
-            if (isInner){
-                spacingFromCellHole=1;
-                boltX=coord[0]+(radius+boltDiameter+spacingFromCellHole);
-                boltY=coord[1];
-                translate([boltX,boltY,-0.001]){
-                  cylinder(d=boltDiameter,h=holderActuallHeight+ stripTabHeight+coverThickness);
-                }
-            }
-        }
-}
+
     
-module drawRim(conv,rimHeight,offset=rimOffset){
+module drawRim(rimHeight,rOffset=rimOffset){
     if (!debug){
         linear_extrude(rimHeight){
-            offset(r=offset){
-                polygon(conv);
+            offset(r=rOffset){
+                polygon(createOutline());
             }
-        }
+        }      
     }
 }
 module drawHoles(manArr,left=true){
@@ -279,19 +310,17 @@ module drawHoles(manArr,left=true){
          }     
     }  
 }
-function calc2D(col,row)
-    =[ (radius*(row%2))+(col*holderDiameter)
-       ,sin(angle)*holderDiameter*row];
+function calc2D(coord,xOffset=0,yOffset=0)
+    =[ ((radius*(coord[1]%2))+(coord[0]*holderDiameter))+xOffset
+       ,(sin(angle)*holderDiameter*coord[1])+yOffset ];
 
-function calcAbsolutePostion(col,row)
-    =concat(calc2D(col,row),0);
 
 module drawCell(pos,cell,left=true){
        
     col=pos[0];
     row=pos[1];              
-       
-    position=calcAbsolutePostion(col,row);
+    
+    position=concat(calc2D(pos),0);
     x=position[0];
     y=position[1];
     z=position[2];
@@ -322,6 +351,11 @@ module drawCell(pos,cell,left=true){
             clr=drawNegative ? "black" :"red";
             color(clr){
                 cylinder(d=cellDiameter,h=holderActuallHeight);
+                translate([0,-3,0]){
+                    rotate([0,0,90]){
+                        #text(str(col,",",row),size=4);                   
+                    }
+                }
             }
         }       
     }else{
