@@ -7,39 +7,25 @@ stripWidth=8;
 
 stripDiff=-1;// how small make the strip in plus side
 
-coverThickness=2;
 
-outlineOffset=6;//body thickness
+outlineOffset=6; 
 startOffset=1;
 rightOffset=1;
 endOffset=3;
-leftOffset=14;
+leftOffset=10;
+
+coverThickness=2;
+bodyThickness=4;
 
 boltDiameter=5.5;
 boltSpacingFromCell=1.5;
-bodyThickness=3;
 
-bmxXoffset=5;
+
+bmxXoffset=4;
 bmsWidth=15.5;
 bmsLength=109;
 bmsHeight=66;
 bmsSpacingFromCells=1;
-
-////////
-
-
-holderDiameter=cellDiameter+spacing;
-stripLength=holderDiameter+0.001; 
-angle=60;    
-radius=holderDiameter/2;         
-
-holderActuallHeight=holderHeight+0.002;
-stripZ=holderHeight+(stripTabHeight/2);                            
-
-outerRimHeight=holderHeight+stripTabHeight-0.001;
-
-bodyHeight=cellHeight;
-rimOffset=radius+spacing;// from where to drawe holer's rim
 
 
 makeHolders=true;
@@ -51,6 +37,9 @@ makeBody=true;
 makeCovers=flase;
 makeLeftCover=makeCovers && true;
 makeRightCover=makeCovers && true;
+
+
+////////
 
 s=0;
 n=-1;
@@ -121,6 +110,23 @@ function countPolarity(manArr,d)
         for(y=[0:len(manArr[x])-1])
             if(manArr[x][y]==d) 1             
     ];
+
+
+holderDiameter=cellDiameter+spacing;
+stripLength=holderDiameter+0.001; 
+angle=60;    
+radius=holderDiameter/2;         
+
+holderActuallHeight=holderHeight+0.002;
+stripZ=holderHeight+(stripTabHeight/2);                            
+
+outerRimHeight=holderHeight+stripTabHeight-0.001;
+
+bodyHeight=cellHeight;
+rimOffset=radius+spacing;// from where to drawe holer's rim
+
+
+
 
 negatives=len(countPolarity(manArr,n));
 positives=len(countPolarity(manArr,p));
