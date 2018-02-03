@@ -10,12 +10,12 @@ stripDiff=-0.5;// how small make the strip in plus side
 rimThicnkess=2;
 outlineOffset=6; 
 startOffset=0;//1;
-rightOffset=0;//;
+rightOffset=-5;//;
 endOffset=0;//;
 leftOffset=12;//;
 
 coverThickness=2;
-bodyThickness=4;
+bodyThickness=3;
 
 boltDiameter=5.5;
 boltSpacingFromCell=1.5;
@@ -26,16 +26,17 @@ bmsWidth=15.5;
 bmsLength=109;
 bmsHeight=67;
 bmsSpacingFromCells=1;
-
+makeRightHoles=false;
 
 makeHolders=true;
-makeLeftHolder=makeHolders && true;
+makeLeftHolder=makeHolders && false;
 makeRightHolder=makeHolders && true;
 
 makeBody=true;
+makeBMS=false;
 
 makeCovers=false;//make bms through all holders
-makeLeftCover=makeCovers && true;
+makeLeftCover=makeCovers && false;
 makeRightCover=makeCovers && true;
 
 
@@ -92,7 +93,7 @@ mine14s6p=[
             ];        
 
 simpleOne=[                  
-         [n,n,n]
+         [n,n,n,n,n,n,n]
         ,[n,n,n]
         ,[n,n,n]
         ,[n,n]
@@ -163,12 +164,23 @@ left =[for(x=[len(manArr)-1:-1:0])
 echo ("left",left);
 
 
-
+function startOutline()
+    =[for(i=start) calc2D(i,-outlineOffset- startOffset,0)];
+        
+function rightOutline()
+  = [for(i=right) calc2D(i,0,outlineOffset+ rightOffset)]  ;
+      
+function endOutline()
+    =[for(i=end)  calc2D(i,outlineOffset+ endOffset,0)] ;
+        
+function leftOutline()
+    =[for(i=left) calc2D(i,0,-outlineOffset-leftOffset)];    
+        
 function createOutline()
-    =concat( [for(i=start) calc2D(i,-outlineOffset- startOffset,0)]
-            ,[for(i=right) calc2D(i,0,outlineOffset+ rightOffset)]
-            ,[for(i=end)  calc2D(i,outlineOffset+ endOffset,0)]
-            ,[for(i=left) calc2D(i,0,-outlineOffset-leftOffset)]);
+    =concat( startOutline()
+            ,rightOutline()
+            ,endOutline()
+            ,leftOutline());
 
 
 difference(){
@@ -186,8 +198,8 @@ difference(){
             translate([0,0,-coverThickness-bodyHeight-0.1]){
                 if (makeBody){                             
                     difference(){                                        
-                        drawRim(bodyHeight,actuallBodyThickness);                    
-                        translate([0,0,-0.001]){            
+                        drawRim(bodyHeight,actuallBodyThickness);                                            
+                        translate([0,0,-0.001]){                                
                             drawRim(bodyHeight+0.01,rimOffset);                    
                         }             
                     }                    
@@ -208,7 +220,7 @@ difference(){
         
     }
     
-    if (bmsLength>0){
+    if (makeBMS){
             startPos=start[0];         
             coord=calc2D(startPos);                        
             bmsX=coord[0]-radius+spacing+bmxXoffset;
@@ -260,17 +272,19 @@ module drawHolder(leftSide=true){
 }
 module drawAllBoltHoles(){
         drawBoltHoles(start,1,-1,boltDiameter);
-        arrEdge=right;
-        isInnerPrm=1;
-        spaceFactor=-1;   
-        for(a=[1:len(arrEdge)-1]){// draw right bolt diameter                     
-            coord=calc2D(arrEdge[a]);          
-            boltX=coord[0]+spaceFactor*(radius+(boltDiameter/2)+(boltSpacingFromCell/2));
-            boltY=coord[1]-spaceFactor*(radius+(boltDiameter/2)+boltSpacingFromCell);
-            translate([boltX,boltY,-0.001]){
-              cylinder(d=boltDiameter,h=holderActuallHeight+ stripTabHeight+coverThickness);
-            }          
-          }
+        if (makeRightHoles){
+            arrEdge=right;
+            isInnerPrm=1;
+            spaceFactor=-1;   
+            for(a=[1:len(arrEdge)-1]){// draw right bolt diameter                     
+                coord=calc2D(arrEdge[a]);          
+                boltX=coord[0]+spaceFactor*(radius+(boltDiameter/2)+(boltSpacingFromCell/2));
+                boltY=coord[1]-spaceFactor*(radius+(boltDiameter/2)+boltSpacingFromCell);
+                translate([boltX,boltY,-0.001]){
+                  cylinder(d=boltDiameter,h=holderActuallHeight+ stripTabHeight+coverThickness);
+                }          
+              }
+            }
         drawBoltHoles(end,1,1,boltDiameter);
 }
 
@@ -299,6 +313,7 @@ module drawRim(rimHeight,rOffset){
     if (!debug){
         linear_extrude(rimHeight){
             offset(r=rOffset){
+                outline=createOutline();                
                 polygon(createOutline());
             }
         }      
