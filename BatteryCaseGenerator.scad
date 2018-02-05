@@ -7,39 +7,39 @@ stripWidth=8;
 
 stripDiff=-0.2;// how small make the strip in plus side
 
-rimThicnkess=3;
-outlineOffset=6; 
+rimThicnkess=5;
 startOffset=0;//1;
-rightOffset=5;//;
+rightOffset=4;//;
 endOffset=0;//;
-leftOffset=13;//;
+leftOffset=16;//;
 
-coverThickness=3.5;
-bodyThickness=3.5;
+coverThickness=2;
+bodyThickness=2;
 
 boltDiameter=4.5;
-boltSpacingFromCell=2.5;
+boltSpacingFromCell=3.5;
 
- 
-senseHolesDiameter=4; //for sense wires
 
 bmxXoffset=4;
 bmsWidth=16;
 bmsLength=109.5;
 bmsHeight=67;
-bmsSpacingFromCells=1;
+bmsSpacingFromCells=4;
 makeRightHoles=true;
 
-makeHolders=true;
+makeHolders=false;
 makeLeftHolder=makeHolders && true;
 makeRightHolder=makeHolders && true;
+
+makeCovers=true;
+makeLeftCover=makeCovers && true;
+makeRightCover=makeCovers && true;
 
 makeBody=true;
 makeBMS=true;
 
-makeCovers=true;//make bms through all holders
-makeLeftCover=makeCovers && true;
-makeRightCover=makeCovers && true;
+
+senseHolesDiameter=4; //for sense wires
 
 
 ////////
@@ -104,7 +104,7 @@ simpleOne=[
         
         ];
             
-manArr=trangle14s6p;
+manArr=simpleOne;
 
 debug=false;
 
@@ -167,16 +167,16 @@ echo ("left",left);
 
 
 function startOutline()
-    =[for(i=start) calc2D(i,-outlineOffset- startOffset,0)];
+    =[for(i=start) calc2D(i,-rimThicnkess- startOffset,0)];
         
 function rightOutline()
-  = [for(i=right) calc2D(i,0,outlineOffset+ rightOffset)]  ;
+  = [for(i=right) calc2D(i,0,rimThicnkess+ rightOffset)]  ;
       
 function endOutline()
-    =[for(i=end)  calc2D(i,outlineOffset+ endOffset,0)] ;
+    =[for(i=end)  calc2D(i,rimThicnkess+ endOffset,0)] ;
         
 function leftOutline()
-    =[for(i=left) calc2D(i,0,-outlineOffset-leftOffset)];    
+    =[for(i=left) calc2D(i,0,-rimThicnkess-leftOffset)];    
         
 function createOutline()
     =concat( startOutline()
