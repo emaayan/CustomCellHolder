@@ -1,42 +1,44 @@
 cellHeight=65;
 cellDiameter=18.85;
-holderHeight=8;
+holderHeight=7;
 spacing=0.7;
-stripTabHeight=2;
+stripTabHeight=1.5;
 stripWidth=8;
 
-stripDiff=-0.5;// how small make the strip in plus side
+stripDiff=-0.2;// how small make the strip in plus side
 
-rimThicnkess=2;
+rimThicnkess=3;
 outlineOffset=6; 
 startOffset=0;//1;
-rightOffset=-5;//;
+rightOffset=5;//;
 endOffset=0;//;
-leftOffset=12;//;
+leftOffset=13;//;
 
-coverThickness=2;
-bodyThickness=3;
+coverThickness=3.5;
+bodyThickness=3.5;
 
-boltDiameter=5.5;
-boltSpacingFromCell=1.5;
+boltDiameter=4.5;
+boltSpacingFromCell=2.5;
+
+ 
 senseHolesDiameter=4; //for sense wires
 
 bmxXoffset=4;
-bmsWidth=15.5;
-bmsLength=109;
+bmsWidth=16;
+bmsLength=109.5;
 bmsHeight=67;
 bmsSpacingFromCells=1;
-makeRightHoles=false;
+makeRightHoles=true;
 
 makeHolders=true;
-makeLeftHolder=makeHolders && false;
+makeLeftHolder=makeHolders && true;
 makeRightHolder=makeHolders && true;
 
 makeBody=true;
-makeBMS=false;
+makeBMS=true;
 
-makeCovers=false;//make bms through all holders
-makeLeftCover=makeCovers && false;
+makeCovers=true;//make bms through all holders
+makeLeftCover=makeCovers && true;
 makeRightCover=makeCovers && true;
 
 
@@ -93,7 +95,7 @@ mine14s6p=[
             ];        
 
 simpleOne=[                  
-         [n,n,n,n,n,n,n]
+         [n,n,n]
         ,[n,n,n]
         ,[n,n,n]
         ,[n,n]
@@ -102,7 +104,7 @@ simpleOne=[
         
         ];
             
-manArr=simpleOne;
+manArr=trangle14s6p;
 
 debug=false;
 
@@ -187,7 +189,7 @@ difference(){
     union(){       
             translate([0,0,coverThickness]){
                 if (makeRightCover){         
-                    makeCover();
+                    makeCover(false);
                 }
             }
             translate([0,0,-coverThickness-outerRimHeight-0.1]){
@@ -196,14 +198,24 @@ difference(){
                  }
             }
             translate([0,0,-coverThickness-bodyHeight-0.1]){
+              /*  
                 if (makeBody){                             
-                    difference(){                                        
-                        drawRim(bodyHeight,actuallBodyThickness);                                            
+                    difference(){       
+                        translate([-rimOffset+4,0,0]){
+                          //  drawOutline(startOutline(),bodyHeight-outerRimHeight,rimOffset/4)     ;
+                            linear_extrude(bodyHeight-outerRimHeight){
+                                offset(delta=rimOffset/4){                
+                                        polygon(startOutline());
+                                }
+                            } 
+                        }
+                        //drawRim(bodyHeight,actuallBodyThickness);                                            
                         translate([0,0,-0.001]){                                
-                            drawRim(bodyHeight+0.01,rimOffset);                    
+                            //drawRim(bodyHeight+0.01,rimOffset);                    
                         }             
                     }                    
-                }       
+                } 
+            */      
             }
             translate([0,0,-coverThickness-bodyHeight+outerRimHeight]){
                 mirror([0,0,90]){
@@ -214,7 +226,7 @@ difference(){
             }
             translate([0,0,-coverThickness-coverThickness-bodyHeight-outerRimHeight]){
                 if (makeLeftCover){
-                    makeCover();
+                    makeCover(makeBody);
                 }
             }
         
@@ -288,10 +300,19 @@ module drawAllBoltHoles(){
         drawBoltHoles(end,1,1,boltDiameter);
 }
 
-module makeCover(){
+module makeCover(withBody=false){
    difference(){   
-        drawRim(coverThickness,actuallBodyThickness);                                   
+        drawRim(coverThickness,actuallBodyThickness);                                          
         drawAllBoltHoles();         
+    }
+    if (withBody){
+        
+        difference(){
+            drawRim(bodyHeight,actuallBodyThickness);                                            
+            translate([0,0,-0.001]){                                
+                drawRim(bodyHeight+0.01,rimOffset);                    
+            }        
+        }
     }
 }
 module drawBoltHoles(arrEdge,isInnerPrm,spaceFactor){
@@ -310,11 +331,13 @@ module drawBoltHoles(arrEdge,isInnerPrm,spaceFactor){
 
     
 module drawRim(rimHeight,rOffset){
+    drawOutline(createOutline(),rimHeight,rOffset);    
+}
+module drawOutline(outline,rimHeight,rOffset){
     if (!debug){
         linear_extrude(rimHeight){
-            offset(r=rOffset){
-                outline=createOutline();                
-                polygon(createOutline());
+            offset(r=rOffset){                
+                polygon(outline);
             }
         }      
     }
