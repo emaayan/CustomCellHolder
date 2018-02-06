@@ -28,7 +28,7 @@ bmsSpacingFromCells=3;
 bmsSenseHolesDistance=2;
 makeRightHoles=true;
 
-makeHolders=false;
+makeHolders=true;
 makeLeftHolder=makeHolders && true;
 makeRightHolder=makeHolders && false;
 
@@ -208,6 +208,7 @@ difference(){
                     drawHolder(false);
                  }
             }
+            
             translate([0,0,-coverThickness-bodyHeight-0.1]){
                 //, [0.775, 53.7924] ,[-10, 31.8616],[0, 14.9308] ,[-9, -0]
                 if (makeBody){     
@@ -317,7 +318,7 @@ module drawAllBoltHoles(){
                 boltX=coord[0]+  (sin(60)*(yFactor));
                 boltY=coord[1]+yFactor;//-spaceFactor*(radius+(boltDiameter/2)+boltSpacingFromCell);
                 translate([boltX,boltY,-0.001]){
-                  #cylinder(d=boltDiameter,h=holderActuallHeight+ stripTabHeight+coverThickness);
+                  cylinder(d=boltDiameter,h=holderActuallHeight+ stripTabHeight+coverThickness);
                 }          
               }
             }
@@ -337,7 +338,7 @@ module drawBoltHoles(arrEdge,spaceFactor){
             boltX=coord[0]-xFactor;
             boltY=coord[1]+spaceFactor*((sin(60)*xFactor));
             translate([boltX,boltY,-0.001]){
-                #cylinder(d=boltDiameter,h=holderActuallHeight+ stripTabHeight+coverThickness);
+                cylinder(d=boltDiameter,h=holderActuallHeight+ stripTabHeight+coverThickness);
             }        
         }
       }
