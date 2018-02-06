@@ -5,7 +5,7 @@ spacing=0.7;
 stripTabHeight=1.5;
 stripWidth=8;
 
-stripDiff=-0.2;// how small make the strip in plus side
+stripDiff=0;// how small make the strip in plus side
 
 rimThicnkess=5;
 startOffset=0;//1;
@@ -24,14 +24,15 @@ bmxXoffset=4;
 bmsWidth=16;
 bmsLength=109.5;
 bmsHeight=67;
-bmsSpacingFromCells=4;
-makeRightHoles=true;
+bmsSpacingFromCells=3;
+bmsSenseHolesDistance=2;
+makeRightHoles=false;
 
-makeHolders=false;
-makeLeftHolder=makeHolders && true;
+makeHolders=true;
+makeLeftHolder=makeHolders && false;
 makeRightHolder=makeHolders && true;
 
-makeCovers=true;
+makeCovers=false;
 makeLeftCover=makeCovers && true;
 makeRightCover=makeCovers && true;
 
@@ -103,7 +104,17 @@ simpleOne=[
         ,[n]        
         
         ];
-            
+
+jacob=[ 
+        [n,n,n,n,p,p,p,n,n,n,n,p,p,p,n,n,n,n,p,p]
+       ,[undef,n,n,n,p,p,p,p,n,n,n,p,p,p,p,n,n,n,p,p,undef]
+       ,[undef,n,n,n,n,p,p,p,n,n,n,n,p,p,p,n,n,p,p,n]
+       ,[undef,undef,n,n,n,p,p,p,p,n,n,n,p,p,p,p,n,n,p,n,n]
+       ,[undef,undef,n,n,n,n,p,p,p,n,n,n,n,p,p,p,n,n,p,p]
+       ,[undef,undef,undef,n,n,n,p,p,p,p,n,n,n,p,p,p,p,n,p,p]
+       ,[undef,undef,undef,n,n,n,n,p,p,p,n,n,n,n,p,p,p,p]
+       ,[undef,undef,undef,undef,n,n,n,p,p,p,p,n,n,n,p,p,p]
+       ];
 manArr=simpleOne;
 
 debug=false;
@@ -269,10 +280,11 @@ module drawHolder(leftSide=true){
                       isInner= (a %2)==1;
                      
                           coord=calc2D(left[a]);                        
-                          translate([coord[0]+radius,coord[1]-(senseHolesDiameter*2),-0.001]){                
-                            cylinder(d=senseHolesDiameter,h=holderActuallHeight+stripTabHeight);                                               
-                            translate([0,coord[1]+(senseHolesDiameter/2),stripZ]){
-                               cube([senseHolesDiameter*2,senseHolesDiameter*3,stripTabHeight+0.001],center=true);                             
+                          translate([coord[0]+radius,coord[1]-(senseHolesDiameter*2)-bmsSenseHolesDistance,-0.001]){                
+                            cylinder(d=senseHolesDiameter,h=holderActuallHeight+stripTabHeight);                      
+                              
+                            translate([0,(-bmsSpacingFromCells/2)+bmsSenseHolesDistance+0.0001,stripZ]){
+                               cube([senseHolesDiameter*2,(senseHolesDiameter*2)+bmsSpacingFromCells,stripTabHeight+0.001],center=true);                             
                             }
                         }  
                     
@@ -283,7 +295,7 @@ module drawHolder(leftSide=true){
     }
 }
 module drawAllBoltHoles(){
-        drawBoltHoles(start,1,-1,boltDiameter);
+        drawBoltHoles(start,-1,boltDiameter);
         if (makeRightHoles){
             arrEdge=right;
             isInnerPrm=1;
@@ -315,10 +327,10 @@ module makeCover(withBody=false){
         }
     }
 }
-module drawBoltHoles(arrEdge,isInnerPrm,spaceFactor){
+module drawBoltHoles(arrEdge,spaceFactor){
      for(a=[0:len(arrEdge)-1]){   
         coord=calc2D(arrEdge[a]);         
-        isInner= (a%2)==isInnerPrm;                    
+        isInner= (a%2)==1;                    
         if (isInner){
             boltX=coord[0]+spaceFactor*(radius+(boltDiameter/2)+boltSpacingFromCell);
             boltY=coord[1];
