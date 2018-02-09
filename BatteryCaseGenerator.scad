@@ -33,11 +33,11 @@ makeHolders=false;
 makeLeftHolder=makeHolders && true;
 makeRightHolder=makeHolders && true;
 
-makeCovers=true;
+makeCovers=false;
 makeLeftCover=makeCovers && true;
 makeRightCover=makeCovers && true;
 
-makeBody=false;
+makeBody=true;
 makeBMS=true;
 
 
@@ -238,7 +238,7 @@ difference(){
 
                             translate([from[0]-rimOffset-startOffset+endOffset-0.1,-holderRadius,-0.3]){
                             l=from[0]+to[0]+(rimOffset*2)-startOffset+endOffset+bodyThickness+0.2;
-                                cube([l,0.2,bodyHeight+0.2]);
+                                cube([l,0.5,bodyHeight+0.6]);
                             }
                             
                        
