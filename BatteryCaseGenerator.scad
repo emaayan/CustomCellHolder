@@ -25,15 +25,15 @@ coverThickness=4;
 bodyThickness=rimThicnkess;//7;
 
 boltDiameter=4.7;
-boltSpacingFromCell=5;
-rightBoltSpacingFromCell=5;
+boltSpacingFromCell=6;
+rightBoltSpacingFromCell=6;
 
 
-makeHolders=true;
+makeHolders=false;
 makeLeftHolder=makeHolders && true;
 makeRightHolder=makeHolders && true;
 
-makeCovers=false;
+makeCovers=true;
 makeLeftCover=makeCovers && true;
 makeRightCover=makeCovers && true;
 
