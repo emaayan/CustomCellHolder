@@ -1,4 +1,4 @@
-cellHeight=70;
+cellHeight=66;
 cellDiameter=18.85;
 holderHeight=7;
 spacing=0.7;
@@ -16,15 +16,15 @@ bmsSenseHolesDistance=2;
 makeRightHoles=true;
 
 rimThicnkess=10;
-startOffset=3;//1;
-rightOffset=0;//;
+startOffset=4;//1;
+rightOffset=2;//;
 endOffset=0;//;
 leftOffset=bmsWidth+5 ;
 
-coverThickness=2;
+coverThickness=4;
 bodyThickness=rimThicnkess;//7;
 
-boltDiameter=4.5;
+boltDiameter=4.7;
 boltSpacingFromCell=5;
 rightBoltSpacingFromCell=5;
 
@@ -33,11 +33,11 @@ makeHolders=true;
 makeLeftHolder=makeHolders && true;
 makeRightHolder=makeHolders && true;
 
-makeCovers=true;
+makeCovers=false;
 makeLeftCover=makeCovers && true;
 makeRightCover=makeCovers && true;
 
-makeBody=true;
+makeBody=false;
 makeBMS=true;
 
 
@@ -270,7 +270,7 @@ difference(){
             bmsX=coord[0]-holderRadius+bmxXoffset;
             bmsY=coord[1]-holderRadius-bmsWidth;    
             
-            translate([bmsX,bmsY-bmsSpacingFromCells,-coverThickness-bmsHeight-0.1]){            
+            translate([bmsX,bmsY-bmsSpacingFromCells,-coverThickness-bmsHeight]){            
                cube([bmsLength,bmsWidth,bmsHeight]);
             }
     }   
