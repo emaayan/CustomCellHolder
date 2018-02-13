@@ -7,30 +7,31 @@ stripWidth=8;
 
 stripDiff=0;// how small make the strip in plus side
 
-bmxXoffset=4;
+bmxXoffset=3;
 bmsWidth=18;
 bmsLength=109.5;
 bmsHeight=67;
-bmsSpacingFromCells=3;
+bmsSpacingFromCells=2;
 bmsSenseHolesDistance=2;
 makeRightHoles=true;
 
 rimThicnkess=10;
 startOffset=4;//1;
-rightOffset=2;//;
-endOffset=0;//;
-leftOffset=bmsWidth+5 ;
+rightOffset=0;//;
+endOffset=4;//;
+leftOffset=bmsWidth+4 ;
 
 coverThickness=4;
 bodyThickness=rimThicnkess;//7;
 
 boltDiameter=4.7;
 boltSpacingFromCell=6;
-rightBoltSpacingFromCell=6;
+rightBoltSpacingFromCell=5;
+leftBoltSpacingFromBMS=-2;
 
 
-makeHolders=false;
-makeLeftHolder=makeHolders && true;
+makeHolders=true;
+makeLeftHolder=makeHolders && false;
 makeRightHolder=makeHolders && true;
 
 makeCovers=false;
@@ -50,15 +51,18 @@ s=0;
 n=-1;
 p=1;
 
-trangle14s6p
+trangle14s8p
     =[ 
-     [p,p,p,p,p,p,p,p,p,p,p,n]
-    ,[p,p,p,p,p,p,p,p,p,p,p,n,n,n]
-    ,[p,n,p,p,n,p,p,n,p,n,p,n,n]
-    ,[p,n,p,p,n,p,p,n,p,n,p,n,n]
-    ,[p,n,n,n,n,p,p,n,n,n,n,n]
+     [p,p,p,p,p,p,p,p,p,p,p,n,n,n,n,n,n]
+    ,[p,p,p,p,p,p,p,p,p,p,p,n,n,n,n,n,n,n]
+    ,[p,n,p,p,n,p,p,n,p,n,p,n,n,n,n,n,n]
+    ,[p,n,p,p,n,p,p,n,p,n,p,n,n,n,n]
+    ,[p,n,n,n,n,p,p,n,n,n,n,n,n]
     ,[p,n,n,n,n,p,p,n,n,n,n]
-    ,[n,n,n,n,n,n,n,n,n]
+    ,[n,n,n,n,n,n,n,n,n]    
+    ,[n,n,n,n,n,n,n]    
+    ,[n,n,n,n,n]    
+    
     ];
     
 custom20s10p
@@ -106,7 +110,11 @@ mine14s8p=[
         ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]       
         ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]       
             ];        
-
+std10s3p=[
+          [n,n,n,n,n,n,n,n,n,n]
+         ,[n,n,n,n,n,n,n,n,n,n]
+         ,[n,n,n,n,n,n,n,n,n,n]
+];
 simpleOne=[                  
          [n,n,n]
         ,[n,n,n]
@@ -127,7 +135,12 @@ jacob=[
        ,[undef,undef,undef,n,n,n,n,p,p,p,n,n,n,n,p,p,p,p]
        ,[undef,undef,undef,undef,n,n,n,p,p,p,p,n,n,n,p,p,p]
        ];
-manArr=simpleOne;
+       
+       
+
+manArr=trangle14s8p;
+//manArr=mine14s6p;
+manArr=simpleOne;       
 
 debug=false;
 
@@ -152,7 +165,6 @@ outerRimHeight=holderHeight+stripTabHeight-0.001;
 
 bodyHeight=cellHeight-(2*outerRimHeight);
 rimOffset=holderRadius +rimThicnkess;// from where to drawe holer's rim
-//rimOffset=0;//spacing ;//radius+spacing +rimThicnkess=bodyThickness
 actuallBodyThickness=0.001+bodyThickness;
 
 
@@ -162,7 +174,7 @@ positives=len(countPolarity(manArr,p));
 total=negatives+positives;
 
 
-group=6; 
+group=8; 
             
 echo("**********");
 echo("Negatives",negatives," Positives",positives,"Total :",total,"Serial: ",total/group ,"Group: " ,group);
@@ -209,7 +221,8 @@ function createOutline()
             ,endOutline()
             ,leftOutline());
 
-
+yPos=leftOffset+rimOffset;
+translate([24,yPos,0]){
 difference(){
     union(){       
             translate([0,0,-coverThickness]){
@@ -277,7 +290,7 @@ difference(){
   
 }
  
-      
+}      
 
 module drawHolder(leftSide=true){
      difference(){      
@@ -322,7 +335,7 @@ module drawAllBoltHoles(){
         if (makeRightHoles){
             drawSideBolts(right,holderRadius+rightBoltSpacingFromCell,holderRadius+rightBoltSpacingFromCell);           
         }        
-        drawSideBolts(left,-holderRadius-leftOffset,-holderRadius-leftOffset-bmxXoffset);       
+        drawSideBolts(left,-holderRadius-leftOffset,-holderRadius-leftOffset-bmxXoffset+leftBoltSpacingFromBMS);       
         drawBoltHoles(end,true,-1);
 }
 module drawSideBolts(arrEdge,yFactor,yOffset){
