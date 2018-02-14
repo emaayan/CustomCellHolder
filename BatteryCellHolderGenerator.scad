@@ -2,7 +2,7 @@
 cellHeight=66;
 cellDiameter=18.85;
 holderHeight=7;
-spacing=0.7;
+spacing=0.6;
 stripTabHeight=2;
 stripWidth=8;
 
@@ -12,9 +12,10 @@ s=0;
 n=-1;
 p=1;
 
+makeBMS=true;
 row=0;
 col=0;        
-bmsSpacingFromCells=8;
+bmsSpacingFromCells=2;
 bmsWidth=11;
 bmsLength=74;
 ov=0;
@@ -212,16 +213,41 @@ module bolts(Z){
     drawBolts(right,0,1,-2,+0.5,   0 ,   0,                             holderRadius+(boltDiameter/2),Z);      
     drawBolts(left, 1,1,-1,-0.5,   0 ,   0,                            -holderRadius-(boltDiameter/2),Z);
 }
+orientation=ov;
+bmsSpacingFromCells=4.7+spacing;//boltDiameter;
 module bms(pos,Z){
-        x=pos[0]-holderRadius;//-bmsSpacingFromCells;
-        y=pos[1]-holderRadius-(orientation==ov ? bmsWidth:0)-bmsSpacingFromCells; 
-        translate([x,y,-0.001]){                    
-            rotate(orientation){
-              translate([0,0,-Z]){
-                    cube([bmsLength,bmsWidth,holderActuallHeight+0.002]); 
-              }
-            }
-        }    
+    if (makeBMS){
+        numOfCells=4;
+                
+        
+        if(orientation==ov){
+            endPos= calc2D([row+numOfCells ,col,0]);                        
+            bmsLength=(endPos[0]-pos[0]);
+            x=pos[0]-holderRadius;            
+            y=pos[1]-holderRadius-bmsSpacingFromCells-bmsWidth; 
+            translate([x,y,-0.001]){                    
+                rotate(orientation){
+                  translate([0,0,-Z]){
+                        cube([bmsLength,bmsWidth,holderActuallHeight+0.002]); 
+                  }
+                }
+            }    
+        }
+        
+        if (orientation==oh){
+            x=pos[0]-holderRadius-bmsSpacingFromCells;
+            y=pos[1]-holderRadius;
+            translate([x,y,-0.001]){                    
+                rotate(orientation){
+                  translate([0,0,-Z]){
+                        cube([bmsLength,bmsWidth,holderActuallHeight+0.002]); 
+                  }
+                }
+            }  
+        }
+        
+        
+    }
 }        
 module shell(h){
      linear_extrude(h){
@@ -259,6 +285,7 @@ module holder(){
 module design(isHull=false){
                   
         Z=holderActuallHeight;
+        
         pos=calc2D([row,col,Z]);                  
         bms(pos);
          
@@ -324,7 +351,7 @@ module drawHoles(manArr,left=true){
                         children();                    
                         rotate([0,0,90]){
                               color(clr){                                  
-                                  //  #text(str(col,",",row),size=4);                                                     
+                                    #text(str(col,",",row),size=4);                                                     
                              }                    
                         }                                
                 }       
