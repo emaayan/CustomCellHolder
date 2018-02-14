@@ -7,7 +7,7 @@ stripTabHeight=2;
 stripWidth=8;
 
 stripDiff=0.5;// how small make the strip in plus side
-
+innerSpacing=0;
 s=0;
 n=-1;
 p=1;
@@ -15,8 +15,8 @@ p=1;
 row=0;
 col=0;        
 bmsSpacingFromCells=8;
-bmsWidth=20;
-bmsLength=110;
+bmsWidth=11;
+bmsLength=74;
 ov=0;
 oh=90;
 orientation=ov;
@@ -88,16 +88,20 @@ simpleOne=[
  
 
 manArr=trangle14s8p;         
-manArr=custom20s10p;
-manArr=mine14s6p;         
+//manArr=custom20s10p;
+//manArr=mine14s6p;         
 manArr=simpleOne;         
-manArr=std10s3p;
+//manArr=std10s3p;
+
+boltDiameter=4.7;
+boltRadius=boltDiameter/2;
+
 holderDiameter=cellDiameter+spacing;
 holderRadius=holderDiameter/2;
 stripLength=holderDiameter; 
 angle=60;    
 
-rimOffset=holderDiameter/2;
+rimOffset=boltRadius+spacing;
 holderActuallHeight=holderHeight+0.002;
 
 
@@ -144,8 +148,7 @@ function createOutline()
             ,leftOutline());
 
 
-boltDiameter=4.7;
-boltRadius=boltDiameter/2;
+
 
     
 main(); 
@@ -167,11 +170,10 @@ module makeBody(bodyZ){
     translate([0,0,-bodyZ-1]){  
          difference(){    
              shell(bodyZ);
-             translate([0,0,0]){
-                   bolts(cellHeight+holderHeight);
-             }
+           
+             
              translate([0,0,-0.1]){
-                rim(cellHeight+0.2,0.2);
+                rim(cellHeight+0.2,innerSpacing);
              }
              
          }
@@ -259,9 +261,12 @@ module design(isHull=false){
         Z=holderActuallHeight;
         pos=calc2D([row,col,Z]);                  
         bms(pos);
-                
-        translate([0,0,holderActuallHeight]){
+         
+        translate([0,0,holderActuallHeight]){            
             stripZ=holderHeight+(stripTabHeight/2);                                    
+            translate([0,0,0]){
+                   bolts(cellHeight+holderHeight);
+         }         
             drawHoles(manArr){                  
                
                 if (isHull){
