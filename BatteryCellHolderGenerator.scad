@@ -12,15 +12,16 @@ s=0;
 n=-1;
 p=1;
 
+makeHolder=true;
+makeLeftHolder=makeHolder && false;
+makeRightHolder=makeHolder && true;
 makeBMS=true;
-row=0;
-col=0;        
-bmsSpacingFromCells=2;
-bmsWidth=11;
-bmsLength=74;
-ov=0;
-oh=90;
-orientation=ov;
+
+  
+
+bmsThickness=10;
+bmsSpacingFromCells=5;
+
 
 
 
@@ -92,8 +93,11 @@ manArr=trangle14s8p;
 //manArr=custom20s10p;
 //manArr=mine14s6p;         
 manArr=simpleOne;         
-//manArr=std10s3p;
-
+manArr=std10s3p;
+fromCol=0; fromRow=0; toCol=0;   toRow=6;
+//manArr=simpleOne;         
+//fromCol=0; fromRow=0; toCol=5;   toRow=0;
+ 
 boltDiameter=4.7;
 boltRadius=boltDiameter/2;
 
@@ -183,46 +187,46 @@ module main(){
      }                                                   
    }
    
-  
+   if (makeLeftHolder){
        holder();
+   }
        bodyZ=cellHeight-(holderHeight*2);
+   
        makeBody(bodyZ);
        translate([0,0,-bodyZ-2]){   
          mirror([0,0,90]){
-            holder();
+             if (makeRightHolder){
+                    holder();
+             }
          }
        }
-   
-   
-   
-   /*
-   holder();
-    bodyZ=cellHeight-(holderHeight*2);
-   difference(){
-        makeBody(bodyZ);
-       makeBolts();
-   }
-    */
-     
+           
 }
-module makeBolts(boltsHeight,z){
+module makeBolts(boltsHeight,z,bmsWires=true){
      drawHoles(manArr){   
-            bmsWireHole=4;
-
+           bmsWireHole=2.5;
            off=spacing*2;
-           if($drawHoles_isStart){                       
-               if($drawHoles_isOddRow){                                
-                    translate([-cellDiameter+off,0,z]){ 
-                        cylinder(d=boltDiameter,boltsHeight);                                                        
-                    }
-                    
-                    translate([-holderRadius-(bmsWireHole/2),0,0.003]){
-                        rotate([0,0,60]){
-                            cylinder(d=bmsWireHole,holderHeight+0.006,$fn=3);
+           if($drawHoles_isStart){
+               if($drawHoles_isOddRow){                    
+                    if(!$drawHoles_isRight){                       
+                        translate([-cellDiameter+off,0,z]){ 
+                            cylinder(d=boltDiameter,boltsHeight);                                                        
                         }
                     }
-               }                         
-           }
+               }                                       
+               if(!$drawHoles_isOddRow){
+               if(bmsWires){
+                    translate([-holderRadius-(bmsWireHole),0,-0.001]){
+                        rotate([0,0,45]){
+                            #cylinder(d=bmsWireHole,holderHeight+0.004,$fn=20);                            
+                        }
+                        translate([bmsWireHole/2,0,holderHeight-(stripTabHeight/4)]){                           
+                            cube([bmsWireHole,bmsWireHole,(stripTabHeight/2)+0.02],center=true);
+                        }                                                
+                    }
+               }
+               }
+           }            
            if($drawHoles_isEnd && !$drawHoles_isLeft){
              translate([cellDiameter-off,0,z]){ 
                  if(!$drawHoles_isOddRow){                                
@@ -236,7 +240,7 @@ module makeBolts(boltsHeight,z){
              } 
            }
            
-           if($drawHoles_isRight && !$drawHoles_isEnd ){                                                
+           if($drawHoles_isRight && !$drawHoles_isEnd  ){                                                
              translate([holderRadius,holderRadius+off,z]){                                                          
                  cylinder(d=boltDiameter,boltsHeight);                        
              }
@@ -247,7 +251,7 @@ module makeBolts(boltsHeight,z){
 module profile(r){
        offset(r){ 
            projection(){
-                design(){
+                design(true){
                   drawHoles(manArr){                                      
                     cover=holderDiameter/sin(60);
                     translate([0,0,-(holderHeight+(stripTabHeight/2))]){
@@ -273,8 +277,8 @@ module makeBody(bodyZ){
                     profile(innerSpacing);
                   }
              }
-             makeBolts(cellHeight-(holderHeight*2)+0.002,-0.001);     
-         //  makeBolts(cellHeight-(holderHeight*2));
+             makeBolts(cellHeight-(holderHeight*2)+0.002,-0.001,false);     
+
          }
          
         linear_extrude(bodyZ){//slice
@@ -293,61 +297,97 @@ module makeBody(bodyZ){
                             
    }         
 }
-module drawBolts(arr,from,step,stopPos,xCol,yCol,xOffset,yOffset,Z){
 
-    for(i=[from:step:len(arr)+stopPos] ){
-       a=arr[i];
-       pos=calc2D([a[0]+xCol,a[1]+yCol],xOffset,yOffset);
-       coord=concat(pos,-0.001  );
-       translate (coord){           
-            cylinder(d=boltDiameter,h=Z);              
-       }
-    }
-                    
-}
-module bolts(Z){
 
-    drawBolts(start,1,2,-2,-0.5,   0 ,   -holderRadius+(boltDiameter/2),0,Z);                 
-    drawBolts(end  ,0,2,-2, 0.5,   0 ,    holderRadius-(boltDiameter/2),0,Z);                       
-    drawBolts(right,0,1,-2,+0.5,   0 ,   0,                             holderRadius+(boltDiameter/2),Z);      
-    drawBolts(left, 1,1,-1,-0.5,   0 ,   0,                            -holderRadius-(boltDiameter/2),Z);
-}
-orientation=ov;
-bmsSpacingFromCells=4.7+spacing;//boltDiameter;
-module bms(pos,Z){
-    
+
+
+$bmsLength=undef;
+$bmsWidth=undef;
+$bmsHeight=undef;
+$bmsX=undef;
+$bmsY=undef;
+
+//bms([0,0],[0,4]); //Start 
+//bms([2,1],[2,5]); //End
+//bms([1,0],[2,0]);// left
+
+
+
+module bms(fromPoint,toPoint,isBody=false){
+   
 
     if (makeBMS){
-        numOfCells=4;
+                                    
+        $bmsHeight=holderActuallHeight;//+0.002;
+        
+        
+        isHorizontal=fromPoint[0]==toPoint[0];
+        isVertical=fromPoint[1]==toPoint[1];        
+        
+        isStart=isHorizontal && toPoint[0]==0;
+        isEnd=isHorizontal && !isStart;
+        isLeft=isVertical && toPoint[1]==0;        
+        isRight=isVertical && !isLeft;
+        
+            bmsActuallThickness=bmsThickness+ (isBody? holderRadius+rimOffset+bmsSpacingFromCells :0);       
+            pointDiff= toPoint[1]-fromPoint[1];
+            if (isStart){
+                echo(fromPoint,toPoint,"Start");
+                actuallFromPoint=[fromPoint[0]- (1  +(fromPoint[1] %2 ==0 ? 0: 0.5)),fromPoint[1]];                
+                actuallToPoint=  [toPoint[0]-1,toPoint[1]];      
                 
-        
-        if(orientation==ov){
-            endPos= calc2D([row+numOfCells ,col,0]);                        
-            bmsLength=(endPos[0]-pos[0]);
-            x=pos[0]-holderRadius;            
-            y=pos[1]-holderRadius-bmsSpacingFromCells-bmsWidth; 
-            translate([x,y,-0.001]){                    
-                rotate(orientation){
-                  translate([0,0,-Z]){
-                        cube([bmsLength,bmsWidth,holderActuallHeight+0.002]); 
-                  }
+                fromCoord=calc2D(actuallFromPoint);
+                toCoord=calc2D(actuallToPoint);
+                
+                $bmsX=fromCoord[0]-bmsSpacingFromCells;
+                $bmsY=fromCoord[1];
+                $bmsZ=-0.001;
+                
+                $bmsYSize=toCoord[1]-fromCoord[1];
+                $bmsXSize=bmsActuallThickness;
+                translate([$bmsX,$bmsY,$bmsZ]){     
+                  cube([$bmsXSize,$bmsYSize,$bmsHeight+0.003]);         
                 }
-            }    
-        }
-        
-        if (orientation==oh){
-            x=pos[0]-holderRadius-bmsSpacingFromCells;
-            y=pos[1]-holderRadius;
-            translate([x,y,-0.001]){                    
-                rotate(orientation){
-                  translate([0,0,-Z]){
-                        cube([bmsLength,bmsWidth,holderActuallHeight+0.002]); 
-                  }
+           
+            } 
+            if (isEnd){ 
+                echo(fromPoint,toPoint,"ENd");                
+                actuallFromPoint=[fromPoint[0]+ (1  -(fromPoint[1] %2 ==0 ? 0: 0.5)),fromPoint[1]];                
+                actuallToPoint=  [toPoint[0]+    1,                                  toPoint[1]];      
+                
+                fromCoord=calc2D(actuallFromPoint);
+                toCoord=calc2D(actuallToPoint);
+                
+                $bmsX=fromCoord[0]+bmsSpacingFromCells;
+                $bmsY=fromCoord[1];
+                $bmsZ=-0.001;
+                
+                $bmsYSize=toCoord[1]-fromCoord[1];
+                $bmsXSize=bmsActuallThickness;
+                translate([$bmsX,$bmsY,$bmsZ]){     
+                  cube([$bmsXSize,$bmsYSize,$bmsHeight+0.003]);         
                 }
-            }  
-        }
-        
-        
+           
+            }
+            if (isLeft){                               
+                echo(fromPoint,toPoint,"left");
+                actuallFromPoint=[fromPoint[0],fromPoint[1]];
+                actuallToPoint= [toPoint[0],toPoint[1]];
+          
+                fromCoord=calc2D(actuallFromPoint);
+                toCoord=calc2D(actuallToPoint);
+                
+                $bmsX=fromCoord[0];
+                $bmsY=fromCoord[1]-holderRadius-bmsSpacingFromCells-bmsThickness;
+                $bmsZ=-0.001;
+                               
+                $bmsXSize=toCoord[0]-fromCoord[0];
+                $bmsYSize=bmsActuallThickness;
+                translate([$bmsX,$bmsY,$bmsZ-0.001]){     
+                  cube([$bmsXSize,$bmsYSize,$bmsHeight+0.003]);         
+                }
+            }
+                        
     }
 }        
 module shell(h){
@@ -361,15 +401,10 @@ module shell(h){
 module holder(){
      difference(){
            shell(holderActuallHeight);
-           makeBolts(holderActuallHeight+0.002,-0.001);    
-           translate([0,0,-cellHeight+holderActuallHeight+1.1]){
-              //#bolts(cellHeight+0.002);                              
-               
-           }     
-           
+           makeBolts(holderActuallHeight+0.002,-0.001);                        
            
            translate([0,0,0]){
-                design(){                    
+                design(){        
                        drawHoles(manArr){                                                     
                            translate([0,0,-(holderHeight+(stripTabHeight/2))]){                          
                                 cylinder(d=cellDiameter,h=holderHeight+0.1);
@@ -386,20 +421,17 @@ module holder(){
                            rotate(angle*2){
                                 cube([actuallStripLength,actuallstripWidth,stripTabHeight],center=true);
                            }                                  
-                      }               
+                      }                      
                 };                 
          }
     }      
 }
 
-module design(){
-                  
-    //    Z=holderActuallHeight;       
-    //    pos=calc2D([row,col,Z]);                  
-   //     bms(pos);
-         
-        translate([0,0,holderActuallHeight]){               
-            //bolts(cellHeight+holderHeight);
+module design(isBody=false){
+                      
+        
+        bms([fromCol,fromRow],[toCol,toRow],isBody);
+        translate([0,0,holderActuallHeight]){                           
             children();                                      
         }                    
 }
@@ -428,7 +460,7 @@ module drawHoles(manArr){
          for($drawHoles_row=[0:$drawHoles_rowLength]){
             $drawHoles_isOddRow=($drawHoles_row%2)==1;            
             $drawHoles_cell=colArr[$drawHoles_row];                                
-            position=concat(calc2D([$drawHoles_col,$drawHoles_row]),0);
+            position=concat(calc2D([$drawHoles_col,$drawHoles_row]));
              
             $drawHoles_x=position[0];
             $drawHoles_y=position[1];
@@ -452,10 +484,7 @@ module drawHoles(manArr){
    
 
 
-function calc2D(coord,xOffset=0,yOffset=0)
-    =[  ((holderRadius *(coord[1]%2))+(coord[0]*holderDiameter))+xOffset
-       ,(sin(angle)*holderDiameter*coord[1]) +yOffset];
 
-
- 
-    
+function calc2D(coord)
+    =[  ((holderRadius *(coord[1]%2))+(coord[0]*holderDiameter))
+       ,( sin(angle)   *holderDiameter*coord[1]) ];
