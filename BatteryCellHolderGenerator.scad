@@ -15,7 +15,7 @@ p=1;
 
 makeHolder=true;
 makeLeftHolder=makeHolder && true;
-makeRightHolder=makeHolder && false;
+makeRightHolder=makeHolder && true;
 makeBMS=true;
 boltDiameter=4.7;
 boltRadius=boltDiameter/2;  
@@ -93,21 +93,21 @@ simpleOne=[
 
 manArr=trangle14s8p; from=[0,0]; to=[5,0]; bmsThickness=16;
 //manArr=custom20s10p;
-manArr=mine14s6p; from=[0,0]; to=[4,0];  bmsThickness=16;
+//manArr=mine14s6p; from=[0.2,0]; to=[4,0];  bmsThickness=16;
 
-//manArr=std10s3p; from=[0,0]; to=[0,6.2]; bmsThickness=10;
+manArr=std10s3p; from=[0,0]; to=[0,6.2]; bmsThickness=10;
 //manArr=std10s3p; from=[2,0]; to=[2,6.1];bmsThickness=10;
-manArr=simpleOne; from=[0,0]; to=[4,0]; bmsThickness=10;
+//manArr=simpleOne; from=[0,0]; to=[4,0]; bmsThickness=10;
  
 
-
+//TODO: make slicing
 
 holderDiameter=cellDiameter+spacing;
 holderRadius=holderDiameter/2;
 stripLength=holderDiameter; 
 angle=60;    
 
-rimOffset=boltRadius+spacing;
+rimOffset=boltDiameter+spacing;
 holderActuallHeight=holderHeight;
 
 
@@ -389,16 +389,21 @@ module makeBolts(boltsHeight){
                             }
                         }
                     }
+                    
+                    translate([-holderRadius-bmsWireHole,(-holderRadius*sin(60))+bmsWireHole,-0.001]){               
+                            cylinder(d=bmsWireHole,holderHeight+stripTabHeight,$fn=20);      
+                    }
                     translate([-holderRadius-bmsWireHole,0,-0.001]){                     
                         cylinder(d=bmsWireHole,holderHeight+stripTabHeight,$fn=20);
+                        
                         translate([bmsWireHole/2,0,bodyHeight/2]){
                             if (!$drawHoles_isRight){
                                 children();
                             }
                             
                         }
-                        translate([bmsWireHole/2,0,holderHeight+stripTabHeight]){                           
-                            cube([bmsWireHole,bmsWireHole,(stripTabHeight/2)],center=true);
+                        translate([bmsWireHole/2,0,holderHeight]){                           
+                            ccube([bmsWireHole,bmsWireHole,stripTabHeight],center=true);
                         }                                                
                     }                   
                                                      
@@ -418,7 +423,11 @@ module makeBolts(boltsHeight){
                                 cylinder(d=boltDiameter,boltsHeight);                                                        
                             }                            
                         }
+                        
                         translate([-holderRadius+bmsWireHole,0,-0.001]){
+                            translate([off,(-holderRadius*sin(60))+bmsWireHole,-0.001]){               
+                                cylinder(d=bmsWireHole,holderHeight+stripTabHeight,$fn=20);      
+                            }
                             translate([off,0,0]){                                 
                                 cylinder(d=bmsWireHole,holderHeight+stripTabHeight,$fn=20);                                                            
                                  translate([-(bmsWireHole/2),0,bodyHeight/2]){
@@ -428,8 +437,8 @@ module makeBolts(boltsHeight){
                             
                                  }
                             }
-                            translate([0,0,holderHeight+stripTabHeight]){                           
-                                cube([bmsWireHole,bmsWireHole,(stripTabHeight/2)],center=true);
+                            translate([0,0,holderHeight]){                           
+                                ccube([bmsWireHole,bmsWireHole,(stripTabHeight)],center=true);
                             }                                                
                          }
                  }
@@ -447,12 +456,17 @@ module makeBolts(boltsHeight){
                    cylinder(d=boltDiameter,boltsHeight);                        
                  }     
              }else{
-                 translate([-holderRadius,-holderRadius-off,0]){                              
-                   cylinder(d=boltDiameter,boltsHeight);                        
+                 translate([-holderRadius,-holderRadius-off-bmsWireHole,0]){                              
+                   cylinder(d=boltDiameter,boltsHeight);
                  }     
+                 
              }
-
-             
+             translate([-holderRadius,-holderRadius+off,0]){  
+                cylinder(d=bmsWireHole,boltsHeight);
+                 translate([0,0,holderHeight]){                           
+                    ccube([holderRadius,bmsWireHole,(stripTabHeight)],center=true);
+                 } 
+             }
            }
            
            if($drawHoles_isRight && !$drawHoles_isEnd  ){ 
