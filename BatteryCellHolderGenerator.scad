@@ -28,8 +28,8 @@ bmsSpacingFromCells=spacing+boltRadius/2;
 
 trangle14s8p
     =[ 
-     [p,p,p,p,p,p,p,p,p,p,p,n,n,n,n,n,n]
-    ,[p,p,p,p,p,p,p,p,p,p,p,n,n,n,n,n,n,n]
+     [p,p,p,p,p,p,p,p,p,p,p,n,n,n,n,n,n,n]
+    ,[p,p,p,p,p,p,p,p,p,p,p,n,n,n,n,n,n]
     ,[p,n,p,p,n,p,p,n,p,n,p,n,n,n,n,n,n]
     ,[p,n,p,p,n,p,p,n,p,n,p,n,n,n,n]
     ,[p,n,n,n,n,p,p,n,n,n,n,n,n]
@@ -80,27 +80,27 @@ std10s3p=[
     ,[n,n,n,n,n,n,n,n,n,n]
     ];
 simpleOne=[                  
-         [n,n,n]
-        ,[n,n,n]
+         [n,n,n,n]
+        ,[n,n,n,n,n]
+        ,[n,n,n,n,n]
         ,[n,n,n]
         ,[n,n]
-        ,[n,n]
-        ,[n]      
+        ,[n,n]      
         
         ];
  
 
 
-manArr=trangle14s8p; from=[0,0]; to=[5,0]; bmsThickness=16;
+//manArr=trangle14s8p; from=[0,0]; to=[5,0]; bmsThickness=16;
 //manArr=custom20s10p;
-//manArr=mine14s6p; from=[0.2,0]; to=[4,0];  bmsThickness=16;
+//manArr=mine14s6p; from=[0,0]; to=[5,0];  bmsThickness=16;
 
 manArr=std10s3p; from=[0,0]; to=[0,6.2]; bmsThickness=10;
 //manArr=std10s3p; from=[2,0]; to=[2,6.1];bmsThickness=10;
 //manArr=simpleOne; from=[0,0]; to=[4,0]; bmsThickness=10;
  
 
-//TODO: make slicing
+
 
 holderDiameter=cellDiameter+spacing;
 holderRadius=holderDiameter/2;
@@ -112,8 +112,9 @@ holderActuallHeight=holderHeight;
 
 
 
-    
-main();
+translate([holderDiameter,holderDiameter+bmsThickness+rimOffset,0]){    
+    main();
+}
 
 $bmsLength=undef;
 $bmsWidth=undef;
@@ -275,43 +276,48 @@ module main(){
                      makeBolts(bodyHeight+0.2){
                          cube([bmsWireHole*2,(holderDiameter/sin(60)),bodyHeight+0.3],center=true);
                      }
-                 }
-                 
-                 
-                              /* //slicing
-                 linear_extrude(bodyHeight){
+                 }                                 
+                 #slice();
                      
-                    drawHoles(manArr){                       
-                        if($drawHoles_isStart && $drawHoles_isLeft ){
-                           translate([0,-holderDiameter-rimOffset,0]){
-                                %cube ([1,holderDiameter,bodyHeight]); 
-                           }
-                        }
-                         if($drawHoles_isStart && $drawHoles_isRight ){
-                           translate([0,holderRadius,0]){
-                                %cube ([1,holderRadius,bodyHeight]); 
-                           }
-                        }
-                        if($drawHoles_isEnd && $drawHoles_isLeft && !$drawHoles_isRight ){
-                           translate([0,-holderDiameter,0]){
-                                %cube ([1,holderDiameter,bodyHeight]); 
-                           }
-                        }
-                        if($drawHoles_isEnd && $drawHoles_isRight && !$drawHoles_isLeft  ){
-                           translate([0,holderRadius,0]){
-                                %cube ([1,holderRadius,bodyHeight]); 
-                           }
-                        }
-                    }
-                 }  
+                    
+                   
             translate([0,0,-0.1]){   
                 makeBolts(bodyHeight+1);
                 
-            }*/
+            }
           }      
      }
          
 }
+module slice(){
+    sliceThickness=0.5;
+    drawHoles(manArr){                       
+                if($drawHoles_isStart && $drawHoles_isLeft ){
+                   translate([0,0,-0.1]){
+                       rotate([0,0,90]){
+                        cube ([sliceThickness,holderDiameter+bmsThickness,bodyHeight+0.2]); 
+                       }
+                   }
+                }
+                 if($drawHoles_isStart && $drawHoles_isRight ){
+                   translate([0,holderRadius,-0.1]){
+                       cube ([sliceThickness,holderRadius,bodyHeight+0.2]); 
+                   }
+                }
+                if($drawHoles_isEnd && $drawHoles_isLeft && !$drawHoles_isRight ){
+                   translate([holderRadius,0,-0.1]){
+                       rotate([0,0,270]){
+                            cube ([sliceThickness,holderDiameter+bmsThickness,bodyHeight+0.2]); 
+                       }
+                   }
+                }
+                if($drawHoles_isEnd && $drawHoles_isRight && !$drawHoles_isLeft  ){
+                   translate([0,holderRadius,-0.1]){
+                 //       cube ([sliceThickness,holderRadius,bodyHeight+0.2]); 
+                   }
+                }
+            }
+}                    
 module OuterRim(h){
     
     linear_extrude(h){
