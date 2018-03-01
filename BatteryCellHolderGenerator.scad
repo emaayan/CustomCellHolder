@@ -131,7 +131,7 @@ module main(arr,bmsFrom,bmsTo,bmsThickness,makeLeftHolder,makeRightHolder,coverT
               translate([0,0,-actuallHeight-0.1]){      
                 mirror([0,0,90]){
                     translate([0,0,actuallHeight+20]){
-                        Cover(arr,bmsFrom,bmsTo,bmsThickness);
+                        Cover(arr,bmsFrom,bmsTo,bmsThickness,coverThicness);
                     }    
                     CellHolder(arr,bmsFrom,bmsTo,bmsThickness,actuallHeight);          
                 }
