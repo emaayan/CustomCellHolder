@@ -20,7 +20,7 @@ makeBMS=true;
 boltDiameter=4.7;
 boltRadius=boltDiameter/2;  
 
-bmsThickness=16;
+
 bmsSpacingFromCells=spacing+boltRadius/2;
 
 
@@ -79,6 +79,7 @@ std10s3p=[
     ,[n,n,n,n,n,n,n,n,n,n]
     ,[n,n,n,n,n,n,n,n,n,n]
     ];
+    
 simpleOne=[                  
          [n,n,n,n]
         ,[n,n,n,n,n]
@@ -93,10 +94,10 @@ simpleOne=[
 
 //manArr=trangle14s8p; from=[0,0]; to=[5,0]; bmsThickness=16;
 //manArr=custom20s10p;
-//manArr=mine14s6p; from=[0,0]; to=[5,0];  bmsThickness=16;
+manArr=mine14s6p; from=[0,0]; to=[5,0];  bmsThickness=16;
 
-manArr=std10s3p; from=[0,0]; to=[0,6.2]; bmsThickness=10;
-//manArr=std10s3p; from=[2,0]; to=[2,6.1];bmsThickness=10;
+//manArr=std10s3p; from=[0,0]; to=[0,6]; bmsThickness=16;
+//manArr=std10s3p; from=[2,0]; to=[2,6.1];bmsThickness=16;
 //manArr=simpleOne; from=[0,0]; to=[4,0]; bmsThickness=10;
  
 
@@ -112,9 +113,9 @@ holderActuallHeight=holderHeight;
 
 
 
-translate([holderDiameter,holderDiameter+bmsThickness+rimOffset,0]){    
+//translate([holderDiameter,holderDiameter+bmsThickness+rimOffset,0]){    
     main();
-}
+//}
 
 $bmsLength=undef;
 $bmsWidth=undef;
@@ -128,6 +129,7 @@ $isBmsInEnd=undef;
 $isBmsInLeft=undef;
 $bmsH=undef;
 $bmsV=undef;
+
 module Bms(fromPoint,toPoint){   
     if (makeBMS){
         senseWires=1;                       
@@ -150,9 +152,10 @@ module Bms(fromPoint,toPoint){
                 actuallToPoint=  [toPoint[0]-1,toPoint[1]];      
                 
                 fromCoord=calc2D(actuallFromPoint);
-                toCoord=calc2D(actuallToPoint);
                 
-                $bmsX=fromCoord[0]-bmsSpacingFromCells;
+                toCoord=calc2D(actuallToPoint);
+                echo(fromCoord[0],actuallFromPoint,fromCoord);
+                $bmsX=fromCoord[0]+holderRadius-(bmsThickness+bmsSpacingFromCells);
                 $bmsY=fromCoord[1]-holderRadius;
                 $bmsZ=-0.001;
                 
@@ -295,19 +298,19 @@ module slice(){
                 if($drawHoles_isStart && $drawHoles_isLeft ){
                    translate([0,0,-0.1]){
                        rotate([0,0,90]){
-                        cube ([sliceThickness,holderDiameter+bmsThickness,bodyHeight+0.2]); 
+                        cube ([sliceThickness,holderDiameter+bmsThickness+rimOffset,bodyHeight+0.2]); 
                        }
                    }
                 }
                  if($drawHoles_isStart && $drawHoles_isRight ){
                    translate([0,holderRadius,-0.1]){
-                       cube ([sliceThickness,holderRadius,bodyHeight+0.2]); 
+                       cube ([sliceThickness,holderDiameter,bodyHeight+0.2]); 
                    }
                 }
                 if($drawHoles_isEnd && $drawHoles_isLeft && !$drawHoles_isRight ){
                    translate([holderRadius,0,-0.1]){
                        rotate([0,0,270]){
-                            cube ([sliceThickness,holderDiameter+bmsThickness,bodyHeight+0.2]); 
+                            cube ([sliceThickness,holderDiameter+bmsThickness+rimOffset,bodyHeight+0.2]); 
                        }
                    }
                 }
@@ -330,7 +333,7 @@ module OuterRim(h){
                                 }
                               }
                               Bms(from,to){                                                                              
-                                   cube([$bmsXSize,$bmsYSize,1]); 
+                                  cube([$bmsXSize,$bmsYSize,1]); 
                               }
                               makeBolts(bodyHeight); 
                           }
@@ -386,7 +389,8 @@ module makeBolts(boltsHeight){
                         if( $drawHoles_col==fromCol && $drawHoles_col==toCol &&
                              $drawHoles_row>=fromRow && $drawHoles_row<=toRow 
                             ){
-                            translate([-holderDiameter-off-bmsThickness-boltDiameter,0,0]){ 
+                            xMe=-holderDiameter-bmsSpacingFromCells-bmsThickness-boltDiameter-off;//-off-()-boltDiameter;
+                            translate([xMe,0,0]){ 
                                 cylinder(d=boltDiameter,boltsHeight);                                                        
                             }
                         }else{
@@ -417,10 +421,10 @@ module makeBolts(boltsHeight){
            }            
            if($drawHoles_isEnd && !$drawHoles_isLeft){
              translate([cellDiameter-off,0,0]){ 
-                 if(!$drawHoles_isOddRow){                                
+                 if(!$drawHoles_isOddRow){
                       if( $drawHoles_col==fromCol && $drawHoles_col==toCol &&
                           $drawHoles_row>=fromRow && $drawHoles_row<=toRow ){
-                            translate([(holderDiameter-off),0]){ 
+                            translate([(bmsSpacingFromCells+bmsThickness+boltDiameter+off),0,0]){ 
                                 cylinder(d=boltDiameter,boltsHeight);                                                        
                             }
                             
