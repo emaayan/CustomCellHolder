@@ -109,17 +109,17 @@ holderActuallHeight=holderHeight;
 actuallHeight=holderHeight+stripTabHeight; 
 
 
-translate([-250,0,0])   main(trangle14s8p ,[0,0],[5,0],16,true,false,0);    
+//translate([-250,0,0])   main(trangle14s8p ,[0,0],[5,0],16,true,false,0);    
 //rotate([0,0,90])
    //translate([20,20,0])      main(simpleOne    ,[-0.0,0],[5.5,0],16,false,true,0); 
 
-translate([0,150,0])    main(mine14s6p    ,[0,0],[5,0],16,false,true,0); 
+//translate([0,150,0])    main(mine14s6p    ,[0,0],[5,0],16,false,true,0); 
 //translate([200,200,0])  main(custom20s10p ,[0,0],[0,4],16,true,false,0); 
 
-translate([200,0,0])    main(std10s3p     ,[0,0],[0,6],16,false,true,0); 
+translate([200,0,0])    main(std10s3p     ,[0,0],[0,8],16,true,true,0); 
 //translate([200,0,0])    main(std10s5p    ,[0,0],[4.3,0],16,true,false,0); 
 
-translate([300,0,0])    main(std10s3p     ,[2,0],[2,6.1],10,false,true,0);
+//translate([300,0,0])    main(std10s3p     ,[2,0],[2,6.1],10,false,true,0);
 
 
 //TODO: shave off the body for bms wwires
