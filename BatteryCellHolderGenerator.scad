@@ -114,7 +114,7 @@ actuallHeight=holderHeight+stripTabHeight;
    //translate([20,20,0])      main(simpleOne    ,[-0.0,0],[5.5,0],16,false,true,0); 
 
 //translate([0,150,0])    main(mine14s6p    ,[0,0],[5,0],16,false,true,0); 
-//translate([200,200,0])  main(custom20s10p ,[0,0],[0,4],16,true,false,0); 
+///translate([200,200,0])  main(custom20s10p ,[0,0],[0,4],16,true,false,0); 
 
 translate([200,0,0])    main(std10s3p     ,[0,0],[0,8],16,true,true,0); 
 //translate([200,0,0])    main(std10s5p    ,[0,0],[4.3,0],16,true,false,0); 
@@ -157,7 +157,7 @@ module main(arr,bmsFrom,bmsTo,bmsThickness,makeLeftHolder,makeRightHolder,coverT
                  OuterRim(arr,bmsFrom,bmsTo,bmsThickness,bodyHeight);
                  translate([0,0,-0.1]){ 
                      linear_extrude(h=bodyHeight+0.3){
-                         offset(spacingInBody){                            
+                         offset(r=spacingInBody){                            
                              drawHoles(arr){
                                     rotate(30){                                            
                                         circle(d=(holderDiameter/sin(60))+0.001,$fn=6);                                    
@@ -482,7 +482,7 @@ module Bolt(boltsHeight){
     cylinder(d=boltDiameter,boltsHeight);     
 }
 module Bolts(arr,bmsFrom,bmsTo,bmsThickness){       
-         echo ("Bolts");
+     echo ("Bolts");
      drawHoles(arr){   
            fromCol=bmsFrom[0];
            fromRow=bmsFrom[1];
@@ -490,57 +490,51 @@ module Bolts(arr,bmsFrom,bmsTo,bmsThickness){
            toRow=bmsTo[1];
            
            off=spacing*2;
-           if($drawHoles_isStart && $drawHoles_isOddRow){
-               
-                  //  if(!$drawHoles_isRight){   
-                       translate([-cellDiameter,0,0]){    
-                            if(  $drawHoles_col==fromCol && $drawHoles_col==toCol &&
-                                 $drawHoles_row>=fromRow && $drawHoles_row<=toRow 
-                                ){
-                                                            
-                                translate([-(bmsSpacingFromCells+bmsThickness+boltDiameter+off),0,0]){ 
-                                    children();                                    
-                                }
-                            }else{
-                                children();
-                            }
-                       }
-                //    }                                                                                     
+           if($drawHoles_isStart && $drawHoles_isOddRow){                               
+               translate([-cellDiameter,0,0]){    
+                    if(  $drawHoles_col==fromCol && $drawHoles_col==toCol &&
+                         $drawHoles_row>=fromRow && $drawHoles_row<=toRow 
+                        ){
+                                                    
+                        translate([-(bmsSpacingFromCells+bmsThickness+boltDiameter+off),0,0]){ 
+                            children();                                    
+                        }
+                    }else{
+                        children();
+                    }
+               }           
            }                      
            if($drawHoles_isEnd &&  !$drawHoles_isOddRow){
-              //  if(!$drawHoles_isLeft){
-                     translate([cellDiameter,0,0]){                 
-                          if( $drawHoles_col==fromCol && $drawHoles_col==toCol &&
-                              $drawHoles_row>=fromRow && $drawHoles_row<=toRow ){
-                                  
-                                translate([(bmsSpacingFromCells+bmsThickness+boltDiameter+off),0,0]){ 
-                                    children();
-                                }                            
-                            }else{                          
+                 translate([cellDiameter,0,0]){                 
+                      if( $drawHoles_col==fromCol && $drawHoles_col==toCol &&
+                          $drawHoles_row>=fromRow && $drawHoles_row<=toRow ){
+                              
+                            translate([(bmsSpacingFromCells+bmsThickness+boltDiameter+off),0,0]){ 
                                 children();
-                            }                                                            
-                     }
-              //  }                         
-                                
-           }
-           if($drawHoles_isLeft){                       
-               //  if(!$drawHoles_isStart){
-                     if( $drawHoles_row==fromRow && $drawHoles_row==toRow &&
-                         $drawHoles_col>=fromCol && $drawHoles_col<=toCol
-                      ){
-
-                         translate([-holderRadius,-holderRadius-off-bmsSpacingFromCells-bmsThickness-boltDiameter,0]){                              
+                            }                            
+                        }else{                          
                             children();
-                         }     
-                     }else{
-                         translate([-holderRadius,-holderRadius-off-bmsWireHole,0]){                              
-                           children();
-                         }                              
-                     }                     
-               // }
+                        }                                                            
+                 }                               
+           }
+           if($drawHoles_isLeft){                                     
+                 if( $drawHoles_row==fromRow && $drawHoles_row==toRow &&
+                     $drawHoles_col>=fromCol && $drawHoles_col<=toCol
+                  ){
+
+                     translate([-holderRadius,-holderRadius-off-bmsSpacingFromCells-bmsThickness-boltDiameter,0]){                              
+                        children();
+                     }     
+                 }else{
+                     translate([-holderRadius,-holderRadius-off-spacingInBody,0]){                              
+                       children();
+                     }                              
+                 }                                    
            }
            
-           if($drawHoles_isRight && !$drawHoles_isEnd  ){ 
+           if($drawHoles_isRight 
+            //   && !$drawHoles_isEnd 
+               ){ 
              
              translate([holderRadius,holderRadius+off+spacingInBody,0]){                                                          
                  children();
