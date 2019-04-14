@@ -1,8 +1,8 @@
 
-cellHeight=66;
-cellDiameter=18.85;
-holderHeight=7;
-spacing=0.6;
+cellHeight=64.2;
+cellDiameter=19.5;
+holderHeight=10;
+spacing=0.75;
 stripTabHeight=1.5;
 stripWidth=8.5;
 bodyHeight=cellHeight-(holderHeight*2);
@@ -15,11 +15,11 @@ p=1;
 
 makeHolder=true;
 makeBMS=true;
-boltDiameter=4.7;
+boltDiameter=5;
 boltRadius=boltDiameter/2;  
 
-bmsWireHole=2.6;
-spacingInBody=bmsWireHole;
+bmsWireHole=3;
+spacingInBody=2;//bmsWireHole;
 
 bmsSpacingFromCells=spacing+boltRadius/2;
 
@@ -85,6 +85,7 @@ std10s5p=[
     ,[n,n,n,n,n,n,n,n,n,n]
     ,[n,n,n,n,n,n,n,n,n,n]
     ];    
+    
 simpleOne=[                  
          [n,n,n]
         ,[n,n,n]
@@ -94,8 +95,15 @@ simpleOne=[
         ,[n,n]      
         
         ];
- 
-
+        
+small=[                  
+         [n,n]
+        ,[n,n]
+        ,[n,n]        
+        ,[n,n]        
+        ,[n]        
+        ,[n]        
+];
 
  
 
@@ -109,15 +117,17 @@ holderActuallHeight=holderHeight;
 actuallHeight=holderHeight+stripTabHeight; 
 
 
-translate([-250,0,0])   main(trangle14s8p ,[0,0],[5,0],16,true,false,0);    
+translate([-250,0,0])   main(trangle14s8p ,[0,0],[5,0],16,false,true,0);    
 //rotate([0,0,90])
-   translate([20,20,0])      main(simpleOne    ,[-0.0,0],[5.5,0],16,false,true,0); 
+  // translate([20,20,0])      main(simpleOne    ,[-0.0,0],[5.5,0],16,true,true,0); 
 
 translate([0,150,0])    main(mine14s6p    ,[0,0],[5,0],16,false,true,0); 
-///translate([200,200,0])  main(custom20s10p ,[0,0],[0,4],16,true,false,0); 
+//translate([200,200,0])  main(custom20s10p ,[0,0],[0,4],16,true,false,0); 
 
-translate([200,0,0])    main(std10s3p     ,[0,1],[0,8],16,true,false,0); 
-//translate([200,0,0])    main(std10s5p    ,[0,0],[4.3,0],16,true,false,0); 
+//translate([200,0,0])    main(std10s3p     ,[0,1],[0,8],16,false,true,0); 
+translate([300,0,0])    main(small     ,[0,0],[5,0],17,true,true,0); 
+
+//translate([800,0,0])    main(std10s5p    ,[0,0],[4.3,0],16,false,true,0); 
 
 translate([300,0,0])    main(std10s3p     ,[2,0],[2,6.1],10,true,false,0);
 
@@ -154,7 +164,7 @@ module main(arr,bmsFrom,bmsTo,bmsThickness,makeLeftHolder,makeRightHolder,coverT
           }
       
            difference(){
-                 OuterRim(arr,bmsFrom,bmsTo,bmsThickness,bodyHeight);
+                OuterRim(arr,bmsFrom,bmsTo,bmsThickness,bodyHeight);
                  translate([0,0,-0.1]){ 
                      linear_extrude(h=bodyHeight+0.3){
                          offset(r=spacingInBody){                            
@@ -190,8 +200,8 @@ module main(arr,bmsFrom,bmsTo,bmsThickness,makeLeftHolder,makeRightHolder,coverT
                      };   
                      
                      bmsWires(arr,bmsFrom,bmsTo,bmsThickness){
-                           translate([0,0,(bodyHeight/2)+0.01]){
-                             cube([bmsWireHole*2,holderDiameter,bodyHeight+0.2],center=true);
+                           translate([0,-0,(bodyHeight/2)+0.01]){
+                               cube([bmsWireHole*2,holderDiameter,bodyHeight+0.2],center=true);                                                           
                            }
                      }
                  }                                 
@@ -259,7 +269,8 @@ module bmsWires(arr,bmsFrom,bmsTo,bmsThickness){
                                         }
                                     }
                                 }else{
-                                    translate([0,(holderRadius-bmsWireHole),0]){
+                                    //translate([0,(holderRadius-bmsWireHole),0]){//this was a bug shown 10s that cuts a gap
+                                    translate([0,(bmsWireHole/2),0]){
                                         children();
                                     }
                                 }
