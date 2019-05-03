@@ -4,8 +4,9 @@ cellDiameter=19.5;
 holderHeight=10;
 spacing=0.75;
 stripTabHeight=1.5;
-stripWidth=8.5;
-bodyHeight=cellHeight-(holderHeight*2);
+stripWidth=8.4;
+bodySpacing=0.4; 
+bodyHeight=(cellHeight-(holderHeight*2))-bodySpacing;
 
 stripDiff=0.5;// how small make the strip in plus side
 innerSpacing=0;
@@ -13,9 +14,14 @@ s=0;
 n=-1;
 p=1;
 
+makeWalls=true;
 makeHolder=true;
 makeBMS=true;
-boltDiameter=5;
+makeLid=true;
+lidThickness=1.2;
+coverThicness= makeLid? lidThickness: 0;//1.2;
+
+boltDiameter=5.1;
 boltRadius=boltDiameter/2;  
 
 bmsWireHole=3;
@@ -97,12 +103,14 @@ simpleOne=[
         ];
         
 small=[                  
-         [n,n]
-        ,[n,n]
-        ,[n,n]        
-        ,[n,n]        
-        ,[n]        
-        ,[n]        
+         [n,n,n]
+        ,[n,n,n]
+        ,[n,n,n]        
+        ,[n,n]                     
+        ,[n]                     
+        ,[n]                     
+        ,[n]                             
+                             
 ];
 
  
@@ -117,25 +125,25 @@ holderActuallHeight=holderHeight;
 actuallHeight=holderHeight+stripTabHeight; 
 
 
-translate([-250,0,0])   main(trangle14s8p ,[0,0],[5,0],16,false,true,0);    
+//translate([-250,0,0])   main(trangle14s8p ,[0,0],[5.5,0],16,false,true,coverThicness);    
 //rotate([0,0,90])
-  // translate([20,20,0])      main(simpleOne    ,[-0.0,0],[5.5,0],16,true,true,0); 
+  // translate([20,20,0])      main(simpleOne    ,[-0.0,0],[5.5,0],16,true,true,coverThicness); 
 
-translate([0,150,0])    main(mine14s6p    ,[0,0],[5,0],16,false,true,0); 
-//translate([200,200,0])  main(custom20s10p ,[0,0],[0,4],16,true,false,0); 
+//translate([0,150,0])    main(mine14s6p    ,[0,0],[5,0],16,false,true,coverThicness); 
+//translate([200,200,0])  main(custom20s10p ,[0,0],[0,4],16,true,false,coverThicness); 
 
-//translate([200,0,0])    main(std10s3p     ,[0,1],[0,8],16,false,true,0); 
-translate([300,0,0])    main(small     ,[0,0],[5,0],17,true,true,0); 
+//translate([200,0,0])    main(std10s3p     ,[0,1],[0,8],16,false,true,coverThicness); 
+translate([300,0,0])    main(small     ,[0,0],[6.5,0],17.5,true,true,coverThicness); 
+//translate([300,0,0])    main(small     ,[0,0],[3,0],0,true,true,0); 
+//translate([800,0,0])    main(std10s5p    ,[0,0],[4.3,0],16,false,true,coverThicness); 
 
-//translate([800,0,0])    main(std10s5p    ,[0,0],[4.3,0],16,false,true,0); 
-
-translate([300,0,0])    main(std10s3p     ,[2,0],[2,6.1],10,true,false,0);
+//translate([300,0,0])    main(std10s3p     ,[2,0],[2,6.1],10,true,false,coverThicness);
 
 
 //TODO: shave off the body for bms wwires
 
 
-module main(arr,bmsFrom,bmsTo,bmsThickness,makeLeftHolder,makeRightHolder,coverThicness=3){ 
+module main(arr,bmsFrom,bmsTo,bmsThickness,makeLeftHolder,makeRightHolder,coverThicness){ 
           
      
      translate([0,0,actuallHeight]){
@@ -162,58 +170,59 @@ module main(arr,bmsFrom,bmsTo,bmsThickness,makeLeftHolder,makeRightHolder,coverT
                 }
               }
           }
-      
-           difference(){
-                OuterRim(arr,bmsFrom,bmsTo,bmsThickness,bodyHeight);
-                 translate([0,0,-0.1]){ 
-                     linear_extrude(h=bodyHeight+0.3){
-                         offset(r=spacingInBody){                            
-                             drawHoles(arr){
-                                    rotate(30){                                            
-                                        circle(d=(holderDiameter/sin(60))+0.001,$fn=6);                                    
-                                    }
+           if(makeWalls){               
+               difference(){                   
+                    OuterRim(arr,bmsFrom,bmsTo,bmsThickness,bodyHeight);
+                     translate([0,0,-0.1]){ 
+                         linear_extrude(height=bodyHeight+0.2){
+                             offset(r=spacingInBody){                            
+                                 drawHoles(arr){
+                                        rotate(30){                                            
+                                            circle(d=(holderDiameter/sin(60))+0.001,$fn=6);                                    
+                                        }
+                                 }
                              }
                          }
-                     }
-                     
-                     Bms(bmsFrom,bmsTo,bmsThickness){         
-                            
-                            if($bmsH &&  $isBmsInStart){                            
-                                cube([$bmsXSize+holderRadius+bmsSpacingFromCells,$bmsYSize,bodyHeight+0.2]);     
-                            }
-                            if($bmsV && $isBmsInLeft){
-                                cube([$bmsXSize,$bmsYSize+holderRadius+bmsSpacingFromCells,bodyHeight+0.2]);     
-                            }
-                            if($bmsH &&  $isBmsInEnd){
-                                translate([-holderRadius-bmsSpacingFromCells,0,0]){
+                         
+                         Bms(bmsFrom,bmsTo,bmsThickness){         
+                                
+                                if($bmsH &&  $isBmsInStart){                            
                                     cube([$bmsXSize+holderRadius+bmsSpacingFromCells,$bmsYSize,bodyHeight+0.2]);     
                                 }
-                            }else{
-                               // cube([$bmsXSize,$bmsYSize,bodyHeight+0.2]); 
-                            }
-                            
+                                if($bmsV && $isBmsInLeft){
+                                    cube([$bmsXSize,$bmsYSize+holderRadius+bmsSpacingFromCells,bodyHeight+0.2]);     
+                                }
+                                if($bmsH &&  $isBmsInEnd){
+                                    translate([-holderRadius-bmsSpacingFromCells,0,0]){
+                                        cube([$bmsXSize+holderRadius+bmsSpacingFromCells,$bmsYSize,bodyHeight+0.2]);     
+                                    }
+                                }else{
+                                   // cube([$bmsXSize,$bmsYSize,bodyHeight+0.2]); 
+                                }
+                                
+                             
+                                
+                         }
+                         Bolts(arr,bmsFrom,bmsTo,bmsThickness){
+                            Bolt(bodyHeight+0.2);
+                         };   
                          
-                            
-                     }
-                     Bolts(arr,bmsFrom,bmsTo,bmsThickness){
-                        Bolt(bodyHeight+0.2);
-                     };   
-                     
-                     bmsWires(arr,bmsFrom,bmsTo,bmsThickness){
-                           translate([0,-0,(bodyHeight/2)+0.01]){
-                               cube([bmsWireHole*2,holderDiameter,bodyHeight+0.2],center=true);                                                           
-                           }
-                     }
-                 }                                 
-                 slice(arr,bmsThickness);
-                                                          
-            translate([0,0,-0.1]){   
-                Bolts(arr,bmsFrom,bmsTo,bmsThickness){
-                        Bolt(bodyHeight+1);
-                };   
-            }
-          }      
-     }        
+                         bmsWires(arr,bmsFrom,bmsTo,bmsThickness){
+                               translate([0,-0,(bodyHeight/2)+0.01]){
+                                   cube([bmsWireHole*2,holderDiameter,bodyHeight+0.2],center=true);                                                           
+                               }
+                         }
+                     }                                 
+                     slice(arr,bmsThickness);
+                                                              
+                translate([0,0,-0.1]){   
+                    Bolts(arr,bmsFrom,bmsTo,bmsThickness){
+                            Bolt(bodyHeight+1);
+                    };   
+                }
+              }           
+               }
+           }        
 }
 
 
@@ -225,81 +234,80 @@ module bmsWires(arr,bmsFrom,bmsTo,bmsThickness){
            toRow=bmsTo[1];
            
           off=spacing*2;
-           if($drawHoles_isStart &&  $drawHoles_isOddRow){                                  
-               
-                        translate([-(holderRadius+bmsWireHole),0,-0.001]){                     
-                            
-                            translate([(bmsWireHole/2)-1,0,0]){
-                                if (!$drawHoles_isRight){                                    
-                                    children();
-                                }else{
-                                    translate([0,-(holderRadius/2)-(bmsWireHole),0]){                                        
-                                        children();
-                                    }
-                                }
+           if($drawHoles_isStart &&  $drawHoles_isOddRow){                                                 
+                translate([-(holderRadius+bmsWireHole),0,-0.001]){                     
+                    
+                    translate([(bmsWireHole/2)-1,0,0]){
+                        if (!$drawHoles_isRight){                                    
+                            children();
+                        }else{
+                            translate([0,-(holderRadius/2)-(bmsWireHole),0]){                                        
+                                children();
                             }
-                            
-                            cylinder(d=bmsWireHole,holderHeight+stripTabHeight,$fn=20);                                                                                                              
-                            
+                        }
+                    }
+                    
+                    cylinder(d=bmsWireHole,holderHeight+stripTabHeight,$fn=20);                                                                                                              
+                    
+                    translate([bmsWireHole/2,0,holderHeight]){                           
+                        ccube([bmsWireHole,bmsWireHole,stripTabHeight]);
+                    }                                                
+                    translate([0,-holderRadius/2,0]){                             
+                      cylinder(d=bmsWireHole,holderHeight+stripTabHeight,$fn=20);      
+                        rotate([0,0,270]){
                             translate([bmsWireHole/2,0,holderHeight]){                           
-                                ccube([bmsWireHole,bmsWireHole,stripTabHeight],center=true);
-                            }                                                
-                            translate([0,-holderRadius/2,0]){                             
-                              cylinder(d=bmsWireHole,holderHeight+stripTabHeight,$fn=20);      
-                                rotate([0,0,270]){
-                                    translate([bmsWireHole/2,0,holderHeight]){                           
-                                        ccube([bmsWireHole,bmsWireHole,stripTabHeight],center=true);
-                                    };
-                                }  
-                            }
-                        }                                                                                                               
-           }            
-           if($drawHoles_isEnd   && !$drawHoles_isOddRow){
-               
-                        translate([holderRadius+bmsWireHole,0,-0.001]){                     
-                                                        
-                            
-                            translate([-(bmsWireHole/2)+1,0,0]){
-                                if (!$drawHoles_isLeft ){
-                                    if (!$drawHoles_isRight){                                        
-                                        children();
-                                    }else{
-                                        translate([0,-(bmsWireHole/2),0]){                                         
-                                            children();
-                                        }
-                                    }
-                                }else{
-                                    //translate([0,(holderRadius-bmsWireHole),0]){//this was a bug shown 10s that cuts a gap
-                                    translate([0,(bmsWireHole/2),0]){
-                                        children();
-                                    }
-                                }
-                            }
-                            
-                            cylinder(d=bmsWireHole,holderHeight+stripTabHeight,$fn=20);
-                            rotate([0,0,180]){
-                                translate([bmsWireHole/2,0,holderHeight]){                           
-                                    ccube([bmsWireHole,bmsWireHole,stripTabHeight],center=true);
-                                }  
-                            } 
-                           
-                            translate([0,holderRadius/2,0]){                             
-                                cylinder(d=bmsWireHole,holderHeight+stripTabHeight,$fn=20);
-                                if(!$drawHoles_isRight){
-                                    rotate([0,0,90]){
-                                        translate([bmsWireHole/2,0,holderHeight]){                           
-                                            ccube([bmsWireHole,bmsWireHole,stripTabHeight],center=true);
-                                        };
-                                    }
-                                }else{
-                                    rotate([0,0,180]){
-                                        translate([bmsWireHole,0,holderHeight]){                           
-                                            ccube([bmsWireHole*2,bmsWireHole,stripTabHeight],center=true);
-                                        };
-                                    }
-                                }
-                            }                         
+                                ccube([bmsWireHole,bmsWireHole,stripTabHeight]);
+                            };
                         }  
+                    }
+                }                                                                                                               
+           }           
+           
+           if(!($drawHoles_isLeft && $drawHoles_isRight) &&   $drawHoles_isEnd   && !$drawHoles_isOddRow){
+               
+               translate([holderRadius+bmsWireHole,0,-0.001]){
+                    translate([-(bmsWireHole/2)+1,0,0]){
+                        if (!$drawHoles_isLeft ){
+                            if (!$drawHoles_isRight){                                        
+                                children();
+                            }else{
+                                translate([0,-(bmsWireHole/2),0]){                                         
+                                    children();
+                                }
+                            }
+                        }else{
+                            //translate([0,(holderRadius-bmsWireHole),0]){//this was a bug shown 10s that cuts a gap
+                            translate([0,(bmsWireHole),0]){
+                              //  #cube([1,1,1],center=true);
+                                children();
+                            }
+                        }
+                    }
+                    
+                    cylinder(d=bmsWireHole,holderHeight+stripTabHeight,$fn=20);
+                    rotate([0,0,180]){
+                        translate([bmsWireHole/2,0,holderHeight]){                           
+                            ccube([bmsWireHole,bmsWireHole,stripTabHeight]);
+                        }  
+                    } 
+                   
+                    translate([0,holderRadius/2,0]){                             
+                        cylinder(d=bmsWireHole,holderHeight+stripTabHeight,$fn=20);
+                        if(!$drawHoles_isRight){
+                            rotate([0,0,90]){
+                                translate([bmsWireHole/2,0,holderHeight]){                           
+                                    ccube([bmsWireHole,bmsWireHole,stripTabHeight]);
+                                };
+                            }
+                        }else{
+                            rotate([0,0,180]){
+                                translate([bmsWireHole,0,holderHeight]){                           
+                                    ccube([bmsWireHole*2,bmsWireHole,stripTabHeight]);
+                                };
+                            }
+                        }
+                    }                         
+                }  
             
                                      
                                 
@@ -313,9 +321,9 @@ module bmsWires(arr,bmsFrom,bmsTo,bmsThickness){
                                     children();
                                  }
                              }
-                             ccube([bmsWireHole*1.5,bmsWireHole,holderHeight+stripTabHeight],center=true);                            
+                             ccube([bmsWireHole*1.5,bmsWireHole,holderHeight+stripTabHeight]);                            
                              translate([0,0,holderHeight]){                                 
-                                ccube([holderRadius,bmsWireHole,stripTabHeight],center=true);
+                                ccube([holderRadius,bmsWireHole,stripTabHeight]);
                              } 
                          }
                      
@@ -453,7 +461,7 @@ module CellHolder(arr,bmsFrom,bmsTo,bmsThickness,h,makeCover=false){
                         cube([$bmsXSize,$bmsYSize,h]); 
                     } 
         
-                    Bolts(arr,bmsFrom,bmsTo,bmsThickness,h){
+                    Bolts(arr,bmsFrom,bmsTo,bmsThickness){
                         Bolt(h);
                     };   
                     bmsWires(arr,bmsFrom,bmsTo,bmsThickness);
@@ -468,7 +476,7 @@ module CellHolder(arr,bmsFrom,bmsTo,bmsThickness,h,makeCover=false){
 module OuterRim(arr,bmsFrom,bmsTo,bmsThickness,h){
 
     echo ("Outer Rim");
-    linear_extrude(h){
+    linear_extrude(height=h){
        offset(r=rimOffset){
             hull(){              
               drawHoles(arr){
@@ -515,7 +523,7 @@ module Bolts(arr,bmsFrom,bmsTo,bmsThickness){
                     }
                }           
            }                      
-           if($drawHoles_isEnd &&  !$drawHoles_isOddRow){
+           if(!($drawHoles_isLeft && $drawHoles_isRight) && $drawHoles_isEnd &&  !$drawHoles_isOddRow){
                  translate([cellDiameter,0,0]){
                       if( $drawHoles_col==fromCol && $drawHoles_col==toCol &&
                           $drawHoles_row>=fromRow && $drawHoles_row<=toRow ){
@@ -594,19 +602,19 @@ module Cell(){
     actuallStripLength=stripLength+0.001;
                        
    translate([0,0,holderHeight]){
-       ccube([actuallStripLength,actuallstripWidth,stripTabHeight],center=true);
+       ccube([actuallStripLength,actuallstripWidth,stripTabHeight]);
         
        rotate(angle){
-            ccube([actuallStripLength,actuallstripWidth,stripTabHeight],center=true);
+            ccube([actuallStripLength,actuallstripWidth,stripTabHeight]);
        }
        
        rotate(angle*2){
-            ccube([actuallStripLength,actuallstripWidth,stripTabHeight],center=true);
+            ccube([actuallStripLength,actuallstripWidth,stripTabHeight]);//this creates a small invisible objects in s3d seperated connected mesh
        }                              
    } 
                          
    translate([0,0,0.1]){
-       cylinder(d=cellDiameter,h=holderHeight);                                                                                     
+      cylinder(d=cellDiameter,h=holderHeight);                                                                                     
    }
 }  
 
@@ -638,7 +646,7 @@ module slice(arr,bmsThickness){
     drawHoles(arr){                       
                 if($drawHoles_isStart && $drawHoles_isLeft ){
                    translate([0,0,-0.1]){
-                       rotate([0,0,90]){
+                       rotate([0,0,90]){ 
                         cube ([sliceThickness,holderDiameter+bmsThickness+rimOffset,bodyHeight+0.2]); 
                        }
                    }
@@ -648,16 +656,22 @@ module slice(arr,bmsThickness){
                        cube ([sliceThickness,holderDiameter,bodyHeight+0.2]); 
                    }
                 }
-                if($drawHoles_isEnd && $drawHoles_isLeft && !$drawHoles_isRight ){
+                if($drawHoles_isEnd 
+                    && $drawHoles_isLeft
+                    //&& !$drawHoles_isRight 
+                ){
+                
                    translate([holderRadius,0,-0.1]){
                        rotate([0,0,270]){
                             cube ([sliceThickness,holderDiameter+bmsThickness+rimOffset,bodyHeight+0.2]); 
                        }
                    }
                 }
+                
+                
                 if($drawHoles_isEnd && $drawHoles_isRight && !$drawHoles_isLeft  ){
                    translate([0,holderRadius,-0.1]){
-                 //       cube ([sliceThickness,holderRadius,bodyHeight+0.2]); 
+                       // #cube ([sliceThickness,holderRadius,bodyHeight+0.2]); 
                    }
                 }
             }
