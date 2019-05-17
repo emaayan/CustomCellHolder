@@ -1,21 +1,22 @@
 
 cellHeight=64.2;
-cellDiameter=19.5;
+cellDiameter=19.4;
 holderHeight=10;
 spacing=0.75;
-stripTabHeight=1.5;
-stripWidth=8.4;
+stripTabHeight=1.6;
+stripWidth=8.5;
 bodySpacing=0.4; 
 bodyHeight=(cellHeight-(holderHeight*2))-bodySpacing;
 
-stripDiff=0.5;// how small make the strip in plus side
 innerSpacing=0;
 s=0;
 n=-1;
 p=1;
 
 makeWalls=true;
-makeHolder=true;
+makeTopHolder=true;
+makeBottomHolder=true;
+makeHolder=makeTopHolder || makeBottomHolder ;
 makeBMS=true;
 makeLid=true;
 lidThickness=1.2;
@@ -30,31 +31,19 @@ spacingInBody=2;//bmsWireHole;
 bmsSpacingFromCells=spacing+boltRadius/2;
 
 
-trangle14s8p
-    =[ 
-     [p,p,p,p,p,p,p,p,p,p,p,n,n,n,n,n,n,n]
-    ,[p,p,p,p,p,p,p,p,p,p,p,n,n,n,n,n,n]
-    ,[p,n,p,p,n,p,p,n,p,n,p,n,n,n,n,n,n]
-    ,[p,n,p,p,n,p,p,n,p,n,p,n,n,n,n]
-    ,[p,n,n,n,n,p,p,n,n,n,n,n,n]
-    ,[p,n,n,n,n,p,p,n,n,n,n]
-    ,[n,n,n,n,n,n,n,n,n]    
-    ,[n,n,n,n,n,n,n]    
-    ,[n,n,n,n,n]    
-    
-    ];
+holderDiameter=cellDiameter+spacing;
+holderRadius=holderDiameter/2;
+stripLength=holderDiameter; 
+angle=60;    
 
-mine14s6p=[
-         [n,p,n,p,n,p,n,p,n,p,n,p,n,p]
-        ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]
-        ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]
-        ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]
-        ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]
-        ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]       
-];
+rimOffset=boltDiameter+spacing;
+holderActuallHeight=holderHeight;
+actuallHeight=holderHeight+stripTabHeight; 
 
-custom20s10p
-=[ 
+
+*translate([250,300,0])  
+    rotate([0,0,0])
+        main([ 
      [p,n,p,p,p,n,p,p]
     ,[p,n,p,p,p,n,p,p,n]
     ,[p,n,p,n,p,n,p,p,n]
@@ -75,24 +64,39 @@ custom20s10p
     ,[n,p,n,p,n,p,n]
     ,[n,p,n,p,p,p]
     ,[n,p,n,p]
-    ,[n,p,p,p]
-    ];
-    
-std10s3p=[
-    [n,n,n,n,n,n,n,n,n,n]
-    ,[n,n,n,n,n,n,n,n,n,n]
-    ,[n,n,n,n,n,n,n,n,n,n]
-    ];
-    
-std10s5p=[
-     [n,n,n,n,n,n,n,n,n,n]
-    ,[n,n,n,n,n,n,n,n,n,n]
-    ,[n,n,n,n,n,n,n,n,n,n]    
-    ,[n,n,n,n,n,n,n,n,n,n]
-    ,[n,n,n,n,n,n,n,n,n,n]
-    ];    
-    
-simpleOne=[                  
+    ,[n,p,p,p]    ] ,[0,0],[0,4],16,false,true,coverThicness); 
+
+
+
+*translate([600,100,0])
+    rotate([0,0,90])
+        main( 
+         [n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+        ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+        ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+        ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+        ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+        ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]
+        
+        ,[0,0],[5,0],16,false,true,coverThicness); 
+        
+
+*translate([50,50,0]) //10s1p
+    rotate([0,0,90])       
+        main([                  
+         [n,n,n]
+        ,[n,n,n]
+        ,[n,n,n]
+        ,[n,n,n]
+        ,[n,n]
+        ,[n,n]     
+        
+        ] ,[-0.0,0],[5.5,0],16,false,true,coverThicness); 
+   
+
+*translate([200,0,0])    //10s1p
+    rotate([0,0,0])
+        main([                  
          [n,n,n]
         ,[n,n,n]
         ,[n,n,n]
@@ -100,9 +104,26 @@ simpleOne=[
         ,[n,n]
         ,[n,n]      
         
-        ];
-        
-small=[                  
+        ]  ,[0,1],[0,8],16,false,true,coverThicness); 
+    
+
+translate([300,0,0])    //14s1p
+    rotate([0,0,0])
+        main([                  
+         [n,n,n]
+        ,[n,n,n]
+        ,[n,n,n]        
+        ,[n,n]                     
+        ,[n]                     
+        ,[n]                     
+        ,[n] 
+        ]     ,[0,0],[6.5,0],17.5,makeTopHolder,makeBottomHolder,coverThicness); 
+    
+
+
+*translate([500,0,0])   //14s1p 
+    rotate([0,0,0])
+        main([                  
          [n,n,n]
         ,[n,n,n]
         ,[n,n,n]        
@@ -111,33 +132,45 @@ small=[
         ,[n]                     
         ,[n]                             
                              
-];
-
- 
-
-holderDiameter=cellDiameter+spacing;
-holderRadius=holderDiameter/2;
-stripLength=holderDiameter; 
-angle=60;    
-
-rimOffset=boltDiameter+spacing;
-holderActuallHeight=holderHeight;
-actuallHeight=holderHeight+stripTabHeight; 
+]     ,[0,0],[3,0],0,false,true,0); 
 
 
-//translate([-250,0,0])   main(trangle14s8p ,[0,0],[5.5,0],16,false,true,coverThicness);    
-//rotate([0,0,90])
-  // translate([20,20,0])      main(simpleOne    ,[-0.0,0],[5.5,0],16,true,true,coverThicness); 
+*translate([700,0,0])    //10s5p
+    rotate([0,0,0])
+        main([
+     [n,n,n,n,n,n,n,n,n,n]
+    ,[n,n,n,n,n,n,n,n,n,n]
+    ,[n,n,n,n,n,n,n,n,n,n]    
+    ,[n,n,n,n,n,n,n,n,n,n]
+    ,[n,n,n,n,n,n,n,n,n,n]
+    ]  ,[0,0],[4.3,0],16,false,true,coverThicness);     
 
-//translate([0,150,0])    main(mine14s6p    ,[0,0],[5,0],16,false,true,coverThicness); 
-//translate([200,200,0])  main(custom20s10p ,[0,0],[0,4],16,true,false,coverThicness); 
 
-//translate([200,0,0])    main(std10s3p     ,[0,1],[0,8],16,false,true,coverThicness); 
-translate([300,0,0])    main(small     ,[0,0],[6.5,0],17.5,true,true,coverThicness); 
-//translate([300,0,0])    main(small     ,[0,0],[3,0],0,true,true,0); 
-//translate([800,0,0])    main(std10s5p    ,[0,0],[4.3,0],16,false,true,coverThicness); 
+*translate([50,-100,0])   //10s3p 
+    rotate([0,0,-90])
+        main([
+     [n,n,n,n,n,n,n,n,n,n]
+    ,[n,n,n,n,n,n,n,n,n,n]
+    ,[n,n,n,n,n,n,n,n,n,n]
+    ]  ,[2,0],[2,6.1],10,false,true,coverThicness);    
 
-//translate([300,0,0])    main(std10s3p     ,[2,0],[2,6.1],10,true,false,coverThicness);
+
+
+*translate([300,-100,0]) //triangle14s8p
+    rotate([0,0,270])
+        main([ 
+     [p,p,p,p,p,p,p,p,p,p,p,n,n,n,n,n,n,n]
+    ,[p,p,p,p,p,p,p,p,p,p,p,n,n,n,n,n,n]
+    ,[p,n,p,p,n,p,p,n,p,n,p,n,n,n,n,n,n]
+    ,[p,n,p,p,n,p,p,n,p,n,p,n,n,n,n]
+    ,[p,n,n,n,n,p,p,n,n,n,n,n,n]
+    ,[p,n,n,n,n,p,p,n,n,n,n]
+    ,[n,n,n,n,n,n,n,n,n]    
+    ,[n,n,n,n,n,n,n]    
+    ,[n,n,n,n,n]    
+    
+    ] ,[0,0],[5.5,0],16,false,true,coverThicness);    
+        
 
 
 //TODO: shave off the body for bms wwires
