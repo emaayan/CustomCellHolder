@@ -1,6 +1,6 @@
 
 cellHeight=64.2;
-cellDiameter=19.35;
+cellDiameter=18.7 ; //19.35;
 holderHeight=10;
 spacing=0.75;
 stripTabHeight=1.6;
@@ -22,7 +22,7 @@ makeLid=true;
 lidThickness=1.2;
 coverThicness= makeLid? lidThickness: 0;//1.2;
 
-boltDiameter=5.1;
+boltDiameter=5;
 boltRadius=boltDiameter/2;  
 
 bmsWireHole=3;
@@ -80,7 +80,7 @@ actuallHeight=holderHeight+stripTabHeight;
         ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]
         ,[n,p,n,p,n,p,n,p,n,p,n,p,n,p]
         ]
-        ,[0,0],[5,0],16,makeTopHolder,makeBottomHolder,coverThicness); 
+        ,[0,0],[0,5],16,makeTopHolder,makeBottomHolder,coverThicness); 
         
 
 *translate([50,50,0]) //10s1p
@@ -98,7 +98,7 @@ actuallHeight=holderHeight+stripTabHeight;
 
     
 
-*translate([300,0,0])    //14s1p
+translate([300,0,0])    //14s1p
     rotate([0,0,0])
         main([                  
          [n,n,n]
@@ -113,11 +113,10 @@ actuallHeight=holderHeight+stripTabHeight;
     
 
 
-translate([500,0,0])   //small no bms
+*translate([500,0,0])   //small no bms
     rotate([0,0,0])
         main([                  
          [n,n,n,n]
-        ,[n,n,n]
         ,[n,n,n]
         ,[n]
         ]     
@@ -150,7 +149,7 @@ translate([500,0,0])   //small no bms
 *translate([300,-100,0]) //triangle14s8p
     rotate([0,0,270])
         main([ 
-     [p,p,p,p,p,p,p,p,p,p,p,n,n,n,n,n,n,n]
+     [p,p,p,p,p,p,p,p,p,p,p,n,n,n,n,n,n]
     ,[p,p,p,p,p,p,p,p,p,p,p,n,n,n,n,n,n]
     ,[p,n,p,p,n,p,p,n,p,n,p,n,n,n,n,n,n]
     ,[p,n,p,p,n,p,p,n,p,n,p,n,n,n,n]
@@ -158,7 +157,22 @@ translate([500,0,0])   //small no bms
     ,[p,n,n,n,n,p,p,n,n,n,n]
     ,[n,n,n,n,n,n,n,n,n]    
     ,[n,n,n,n,n,n,n]    
-    ,[n,n,n,n,n]  
+    ,[n,n,n,n,n,n]  
+    ] 
+    ,[0,0],[5.5,0],16,makeTopHolder,makeBottomHolder,coverThicness);    
+    
+ *translate([300,-100,0]) //triangle14s8p
+    rotate([0,0,270])
+        main([ 
+     [p,p,p,p,p,p,p,p,p,p,p,n,n,n,n,n,n]
+    ,[p,p,p,p,p,p,p,p,p,p,p,n,n,n,n,n,n]
+    ,[p,n,p,p,n,p,p,n,p,n,p,n,n,n,n,n,n]
+    ,[p,n,p,p,n,p,p,n,p,n,p,n,n,n,n]
+    ,[p,n,n,n,n,p,p,n,n,n,n,n,n]
+    ,[p,n,n,n,n,p,p,n,n,n,n]
+    ,[n,n,n,n,n,n,n,n,n]    
+    ,[n,n,n,n,n,n,n]    
+    ,[n,n,n,n,n,n]  
     ] 
     ,[0,0],[5.5,0],16,makeTopHolder,makeBottomHolder,coverThicness);    
         
@@ -649,7 +663,8 @@ module Cell(){
    } 
                          
    translate([0,0,0.1]){
-      cylinder(d=cellDiameter,h=holderHeight);                                                                                     
+      *cylinder(d=cellDiameter,h=holderHeight);
+       cylinder(d1=cellDiameter,d2=cellDiameter-0.45,h=holderHeight,$fn=200);
    }
 }  
 
