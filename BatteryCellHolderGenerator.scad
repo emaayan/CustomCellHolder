@@ -1,13 +1,14 @@
 
 cellHeight=64.2;
 cellDiameter=18.7 ; //19.35;
-holderHeight=10;
+cellUpperDiameter=18.45;//cellDiameter-0.45
+holderHeight=10;  
 spacing=0.75;
 stripTabHeight=1.6;
 stripWidth=8.2;
 bodySpacing=0.4; 
 bodyHeight=(cellHeight-(holderHeight*2))-bodySpacing;
-
+//$fa=4;
 innerSpacing=0;
 s=0;
 n=-1;
@@ -18,11 +19,11 @@ makeTopHolder=true;
 makeBottomHolder=true;
 makeHolder=makeTopHolder || makeBottomHolder ;
 makeBMS=true;
-makeLid=true;
-lidThickness=1.2;
+makeLid=false;
+lidThickness=1.5;
 coverThicness= makeLid? lidThickness: 0;//1.2;
 
-boltDiameter=5;
+boltDiameter=4.6;
 boltRadius=boltDiameter/2;  
 
 bmsWireHole=3;
@@ -98,7 +99,7 @@ actuallHeight=holderHeight+stripTabHeight;
 
     
 
-translate([300,0,0])    //14s1p
+*translate([300,0,0])    //14s1p
     rotate([0,0,0])
         main([                  
          [n,n,n]
@@ -113,7 +114,7 @@ translate([300,0,0])    //14s1p
     
 
 
-*translate([500,0,0])   //small no bms
+translate([500,0,0])   //small no bms
     rotate([0,0,0])
         main([                  
          [n,n,n,n]
@@ -161,20 +162,6 @@ translate([300,0,0])    //14s1p
     ] 
     ,[0,0],[5.5,0],16,makeTopHolder,makeBottomHolder,coverThicness);    
     
- *translate([300,-100,0]) //triangle14s8p
-    rotate([0,0,270])
-        main([ 
-     [p,p,p,p,p,p,p,p,p,p,p,n,n,n,n,n,n]
-    ,[p,p,p,p,p,p,p,p,p,p,p,n,n,n,n,n,n]
-    ,[p,n,p,p,n,p,p,n,p,n,p,n,n,n,n,n,n]
-    ,[p,n,p,p,n,p,p,n,p,n,p,n,n,n,n]
-    ,[p,n,n,n,n,p,p,n,n,n,n,n,n]
-    ,[p,n,n,n,n,p,p,n,n,n,n]
-    ,[n,n,n,n,n,n,n,n,n]    
-    ,[n,n,n,n,n,n,n]    
-    ,[n,n,n,n,n,n]  
-    ] 
-    ,[0,0],[5.5,0],16,makeTopHolder,makeBottomHolder,coverThicness);    
         
 
 
@@ -192,7 +179,7 @@ module main(arr,bmsFrom,bmsTo,bmsThickness,makeLeftHolder,makeRightHolder,coverT
      
      if (makeLeftHolder){
         translate([0,0,actuallHeight+20]){
-           Cover(arr,bmsFrom,bmsTo,bmsThickness,coverThicness);
+           Cover(arr,bmsFrom,bmsTo,bmsThickness,coverThicness,false);
         }    
         CellHolder(arr,bmsFrom,bmsTo,bmsThickness,actuallHeight);
      }
@@ -255,7 +242,7 @@ module main(arr,bmsFrom,bmsTo,bmsThickness,makeLeftHolder,makeRightHolder,coverT
                                                               
                 translate([0,0,-0.1]){   
                     Bolts(arr,bmsFrom,bmsTo,bmsThickness){
-                            Bolt(bodyHeight+1);
+                        Bolt(bodyHeight+1);
                     };   
                 }
               }           
@@ -296,7 +283,7 @@ module bmsWires(arr,bmsFrom,bmsTo,bmsThickness,inHolder=true){
                             translate([0,-(0)-(bmsWireHole),holderHeight]){                                        
                                 ccube([bmsWireHole*2,holderDiameter,stripTabHeight]);
                             }
-                        }
+                        }                        
                         *translate([0,-holderRadius/2,0]){                             
                             cylinder(d=bmsWireHole,holderHeight+stripTabHeight,$fn=20);  //wireHole    
                             rotate([0,0,270]){
@@ -388,14 +375,18 @@ module bmsWires(arr,bmsFrom,bmsTo,bmsThickness,inHolder=true){
   }
 }
 
-module Cover(arr,bmsFrom,bmsTo,bmsThickness,coverThicness){
+module Cover(arr,bmsFrom,bmsTo,bmsThickness,coverThicness,isTop=false){
      if (coverThicness>0){
-     difference(){
-        CellHolder(arr,bmsFrom,bmsTo,bmsThickness,coverThicness,true);
-        Bolts(arr,bmsFrom,bmsTo,bmsThickness){
-            Bolt(bodyHeight+0.2);
-        };     
-     }
+         difference(){
+            CellHolder(arr,bmsFrom,bmsTo,bmsThickness,coverThicness,true);
+            Bolts(arr,bmsFrom,bmsTo,bmsThickness){
+                if (isTop){
+                    cylinder(d1=boltDiameter,d2=boltDiameter+boltDiameter,h=coverThicness,$fn=20);     // d2 us based on m4 countersunk dimentions
+                }else{
+                    Bolt(coverThicness+0.2);
+                }
+            };     
+         }
     }
 }
 
@@ -508,6 +499,30 @@ module CellHolder(arr,bmsFrom,bmsTo,bmsThickness,h,makeCover=false){
         
                     Bms(bmsFrom,bmsTo,bmsThickness){                                                                              
                         cube([$bmsXSize,$bmsYSize,h]); 
+                        /*
+                        if ($bmsH){
+                            translate([$bmsX+15,-$bmsY/2,5]){                                             
+                                rotate([0,90,0]){//TODO: MAKE SURE IT WORKS WITH BMS WITH ALL AXIS
+                                    #cylinder(h=30,d=3.5,center=true);
+                                    
+                                }                                
+                            }
+                           
+                       }
+                       if($bmsV){
+                           translate([$bmsX+15,$bmsY/2,5]){                                             
+                                rotate([90,0,0]){//TODO: MAKE SURE IT WORKS WITH BMS WITH ALL AXIS
+                                    #cylinder(h=30,d=3.5,center=true);
+                                    
+                                }                               
+                            }
+                           translate([$bmsX+15+50,-10,5]){ //50 is just test, should be variable for distance between bolts in bms                                            
+                                rotate([90,0,0]){//TODO: MAKE SURE IT WORKS WITH BMS WITH ALL AXIS
+                                    #cylinder(h=30,d=3.5,center=true);
+                                    
+                                }                                
+                            }
+                       }*/
                     } 
         
                     Bolts(arr,bmsFrom,bmsTo,bmsThickness){
@@ -547,8 +562,9 @@ module OuterRim(arr,bmsFrom,bmsTo,bmsThickness,h){
  
 
 module Bolt(boltsHeight){
-    cylinder(d=boltDiameter,boltsHeight);     
+    cylinder(d=boltDiameter,boltsHeight,$fn=20);     
 }
+
 module Bolts(arr,bmsFrom,bmsTo,bmsThickness){       
      echo ("Bolts");
      drawHoles(arr){   
@@ -663,8 +679,8 @@ module Cell(){
    } 
                          
    translate([0,0,0.1]){
-      *cylinder(d=cellDiameter,h=holderHeight);
-       cylinder(d1=cellDiameter,d2=cellDiameter-0.45,h=holderHeight,$fn=200);
+      //cylinder(d=cellDiameter,h=holderHeight);
+       cylinder(d1=cellDiameter,d2=cellUpperDiameter,h=holderHeight,$fn=90);//anything higher than 100 causes "ghost surfaces" in s3d after seperated connected surfaces
    }
 }  
 
